@@ -1,0 +1,48 @@
+source("source/cytof_de_function.R")
+################################################################################
+
+sce <- readRDS("data/cytof_objects/sclc_all_samples_object_no_qc.rds")
+
+# Get samples that are run in multiple experiments
+to_test <- as.data.frame(sce@colData) %>% 
+  dplyr::select(experiment_id,collection_id) %>% 
+  distinct() %>% 
+  dplyr::count(collection_id) %>% 
+  arrange(desc(n)) %>% 
+  dplyr::filter(n > 1) %>% 
+  pull(collection_id) %>% 
+  as.character()
+
+
+
+
+# Checking SC454-1
+temp <- sce[,sce$collection_id == "SC454-1"]
+
+plotExprs(temp, color_by = "experiment_id", assay = "exprs")
+
+temp <- sce[,sce$collection_id == "NJH29-1"]
+
+temp@assays@data$batch_corrected_exprs
+
+plotExprs(temp, color_by = "experiment_id",assay = "batch_corrected_exprs")
+
+################################################################################
+#remove experiment 531050
+################################################################################
+# sce <- sce[,sce$experiment_id != "531050"]
+
+################################################################################
+# remove collections with < 30 cells
+################################################################################
+samples_to_remove <- as.data.frame(sce@colData) %>% 
+  dplyr::count(collection_id) %>% 
+  dplyr::filter(n<30) %>% 
+  pull(collection_id) %>% 
+  as.character()
+
+sce <- sce[,!sce$collection_id %in% samples_to_remove]
+
+
+saveRDS(sce, "data/cytof_objects/sclc_all_samples_object.rds")
+

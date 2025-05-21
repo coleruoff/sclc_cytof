@@ -1,0 +1,13 @@
+data/
+
+figures/
+
+.DS_Store
+
+.Rhistory
+
+.Rprofile
+
+.Rproj.user/
+
+sclc_cytof.Rproj
