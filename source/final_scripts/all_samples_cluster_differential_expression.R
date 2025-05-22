@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 script_seed <- 42
 set.seed(script_seed)
@@ -74,7 +74,7 @@ p2 <- ggplot(plot_df,aes(x=as.numeric(logfc), y=protein, fill=logfc))+
         legend.text = element_text(size=6),
         legend.title = element_text(size=8))
 
-p1
+p2
 
 
 jpeg(glue("figures/all_samples_cluster_{metric_to_use}_de_signif.jpg"), width=120,height=50, units = "mm", res=1000)

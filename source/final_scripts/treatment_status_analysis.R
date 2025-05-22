@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 script_seed <- 42
 set.seed(script_seed)

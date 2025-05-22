@@ -2,7 +2,7 @@
 # to a heatmap based on the expression of the TFs.
 
 ################################################################################
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 set.seed(42)
 ################################################################################

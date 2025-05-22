@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 script_seed <- 42
 set.seed(script_seed)
@@ -72,6 +72,8 @@ p1
 jpeg("figures/all_samples_cluster_diff_abundance_barplots.jpg", width=120,height=100, units = "mm", res=1000)
 print(p1)
 dev.off()
+
+################################################################################
 
 ctc_clusters <- c()
 for(i in unique(cluster_prop_df$new_clusters)){

@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 script_seed <- 42
 set.seed(script_seed)
@@ -8,6 +8,9 @@ ctcs <- readRDS("data/cytof_objects/all_samples_ctcs_with_subtype.rds")
 ################################################################################
 # Treatment status and subtype association
 ################################################################################
+ctc_clusters <- readRDS("data/ctc_clusters.rds")
+ctcs <- ctcs[,colData(ctcs)$new_clusters %in% ctc_clusters]
+
 contin_table <- table(ctcs$treatment_status, ctcs$subtype) %>% 
   as.data.frame.matrix()
 

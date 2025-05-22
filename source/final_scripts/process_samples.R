@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 create_metadata <- function(files,experiment_id){
   
@@ -27,10 +27,7 @@ create_metadata <- function(files,experiment_id){
 
 all_experiments <- list.files("data/cytof_raw_data")
 all_experiments <- all_experiments[-which(all_experiments == "reference_files")]
-
-# original_experiments <- c("experiment_513549","experiment_514521","experiment_515600")
-# new_experiments <- c("experiment_508095","experiment_508814","experiment_511467")
-# all_experiments <- new_experiments
+all_experiments <- all_experiments[!grepl("old",all_experiments)]
 
 markers_to_use <- readRDS("data/markers_to_use.rds")
 

@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 script_seed <- 42
 set.seed(script_seed)
@@ -20,15 +20,16 @@ y <- assay(ctcs, "exprs")
 dim(t(y))
 
 
-# y <- t(scale(t(y)))
+y <- scale(t(y))
 
+dim(y)
 
 
 
 ht_list <- list()
 for(curr_cluster in clusters){
   
-  curr_mat <- y[,ctcs$new_clusters == curr_cluster]
+  curr_mat <- y[ctcs$new_clusters == curr_cluster,]
   
   # scaled_matrix <- scale(y)
   
@@ -36,7 +37,7 @@ for(curr_cluster in clusters){
   
   col_fun = colorRamp2(c(min(curr_mat), 0.5, max(curr_mat)), c("royalblue", "white", "firebrick2"))
   
-  ht <- Heatmap(t(curr_mat), cluster_rows = F,cluster_columns = F,
+  ht <- Heatmap(curr_mat, cluster_rows = F,cluster_columns = F,
                 column_title = paste0("Cluster ", curr_cluster),
                 name=" ",show_heatmap_legend = FALSE, col = col_fun)
   ht
@@ -60,7 +61,7 @@ draw(lgd)
 grid.newpage()
 
 # Create viewports
-pushViewport(viewport(layout = grid.layout(nrow = 1, ncol = 5)))
+pushViewport(viewport(layout = grid.layout(nrow = 1, ncol = 3)))
 
 # Draw heatmap 1
 pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 1))
@@ -72,17 +73,9 @@ pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
 draw(ht_list[[2]], newpage = FALSE)
 upViewport()
 
-# Draw heatmap 3
-pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 3))
-draw(ht_list[[3]], newpage = FALSE)
-upViewport()
 
-# Draw heatmap 4
-pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 4))
-draw(ht_list[[4]], newpage = FALSE)
-upViewport()
 
 # Draw legend
-pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 5))
+pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 3))
 draw(lgd)
 upViewport()

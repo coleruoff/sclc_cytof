@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 ################################################################################
 
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object_no_qc.rds")
@@ -14,6 +14,7 @@ to_test <- as.data.frame(sce@colData) %>%
   as.character()
 
 
+sort(to_test)
 # Checking SC454-1
 temp <- sce[,sce$collection_id == "SC454-1"]
 
@@ -22,10 +23,16 @@ plotExprs(temp, color_by = "experiment_id", assay = "exprs")
 temp <- sce[,sce$collection_id == "SC414-1"]
 plotExprs(temp, color_by = "experiment_id",assay = "exprs")
 
+temp <- sce[,sce$collection_id == "SC443-1"]
+
+plotExprs(temp, color_by = "experiment_id", assay = "exprs")
+
 ################################################################################
 #remove experiment 531050
 ################################################################################
 # sce <- sce[,sce$experiment_id != "531050"]
+
+# sce <- sce[,sce$patient_id != "SC443"]
 
 ################################################################################
 # remove collections with < 30 cells

@@ -42,56 +42,45 @@ plotDR(sce, color_by = "meta9",facet_by = "experiment_id")
 # Add new cluster assignments to colData
 colData(sce)$new_clusters <- cluster_ids(sce, "meta9")
 
-# Save data with cluster assignments
-saveRDS(sce, "data/cytof_objects/sclc_all_samples_with_clusters.rds")
-
 # Plot UMAP manually
 xy <- reducedDim(sce, "UMAP")[, 1:2]
 colnames(xy) <- c("x", "y")
 df <- data.frame(colData(sce), xy, check.names = FALSE)
 
+# plot with non-ctcs being translucent
+df$ctc <- ifelse(df$new_clusters %in% ctc_clusters, "ctc", "non-ctc")
 
 
-# Generate and save cluster colors
-cluster_colors <- c(
-  "#E57373",  # muted red
-  "#FFB74D",  # muted orange
-  "#81C784",  # muted green
-  "#BA68C8",  # muted purple
-  "#FFF176",  # soft yellow
-  "#F48FB1",  # muted pink
-  "#A1887F",  # warm tan
-  "#64B5F6",  # muted blue
-  "#4DB6AC"   # soft teal
-)
- 
-saveRDS(cluster_colors, "data/cluster_colors.rds")
 
 cluster_colors <- readRDS("data/cluster_colors.rds")
 
 
-# Plot UMAP
+
 p1 <- ggplot(df)+
-  geom_point(aes(x=x, y=y, color=new_clusters),size=.1)+
+  geom_point(aes(x=x, y=y, color=new_clusters,alpha=ctc),size=.01)+
   xlab("UMAP 1")+
   ylab("UMAP 2")+
   labs(color = "Clusters")+
   scale_color_manual(name = "Clusters",values=cluster_colors)+
-  theme_classic() +
   guides(color = guide_legend(override.aes = list(size=5)))+
+  scale_alpha_manual(values = c("ctc" = 1, "non-ctc" = 0.05))+
+  theme_classic() +
+  guides(alpha = "none")+
   theme(panel.grid.minor = element_blank(), 
         strip.text = element_text(face = "bold", size=8), 
         axis.text = element_text(color = "black", size=8),
         axis.title = element_text(size=8),
         legend.text = element_text(size=6),
         legend.title = element_text(size=8))
-  
+
+
 p1
+
 
 
 facet_names <- c('normal'="Normal",'cancer'="Cancer")
 p2 <- ggplot(df)+
-  geom_point(aes(x=x, y=y, color=new_clusters),size=.01)+
+  geom_point(aes(x=x, y=y, color=new_clusters,alpha=ctc),size=.01)+
   facet_wrap(~condition,labeller=as_labeller(facet_names))+
   xlab("UMAP 1")+
   ylab("UMAP 2")+
@@ -102,28 +91,18 @@ p2 <- ggplot(df)+
   theme_classic() +
   guides(alpha = "none")+
   theme(panel.grid.minor = element_blank(), 
-      strip.text = element_text(face = "bold", size=8), 
-      axis.text = element_text(color = "black", size=8),
-      axis.title = element_text(size=8),
-      legend.text = element_text(size=6),
-      legend.title = element_text(size=8))  
+        strip.text = element_text(face = "bold", size=8), 
+        axis.text = element_text(color = "black", size=8),
+        axis.title = element_text(size=8),
+        legend.text = element_text(size=6),
+        legend.title = element_text(size=8))  
 
-p2
 
-jpeg("figures/all_samples_cluster.jpg", width=120,height=100, units = "mm", res=1000)
+jpeg("figures/all_samples_cluster_opacity.jpg", width=120,height=100, units = "mm", res=1000)
 print(p1)
 dev.off()
 
 
-jpeg("figures/all_samples_normal_vs_cancer_cluster.jpg", width=180,height=100, units = "mm", res=1000)
+jpeg("figures/all_samples_normal_vs_cancer_cluster_opacity.jpg", width=180,height=100, units = "mm", res=1000)
 print(p2)
 dev.off()
-
-
-
-
-
-
-
-
-

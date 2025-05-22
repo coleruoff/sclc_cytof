@@ -103,7 +103,7 @@ cytof_de <- function(sce, method = "wilcox", metric = "median", ident = "new_clu
   #remove NaNs and Inf
   df <- df %>%
     dplyr::filter(!is.infinite(logfc) & !is.nan(logfc))
-  # 
+  
   df <- df %>%
     dplyr::filter(abs(logfc) > .25)
   

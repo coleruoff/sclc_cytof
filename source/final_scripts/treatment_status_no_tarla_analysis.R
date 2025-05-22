@@ -1,4 +1,4 @@
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 script_seed <- 42
 set.seed(script_seed)
@@ -6,12 +6,14 @@ set.seed(script_seed)
 
 sce <- readRDS("data/cytof_objects/all_samples_ctcs_with_subtype.rds")
 
+ctc_clusters <- readRDS("data/ctc_clusters.rds")
+
 colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "cancer"))
 sce@metadata$experiment_info$condition <- factor(sce@metadata$experiment_info$condition, levels=c("normal", "cancer"))
 
 sce <- sce[,colData(sce)$condition == "cancer"]
 sce <- sce[,colData(sce)$treatment_status != "unknown"]
-sce <- sce[,colData(sce)$new_clusters %in% c(4,5,8)]
+sce <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 
 # Remove cells treated with tarla
 sce <- sce[,colData(sce)$tarla == "F"]

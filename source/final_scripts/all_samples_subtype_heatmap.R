@@ -2,7 +2,7 @@
 # to a heatmap based on the expression of the TFs.
 
 ################################################################################
-source("source/cytof_de_function.R")
+source("source/sclc_cytof_functions.R")
 
 set.seed(42)
 ################################################################################
@@ -13,7 +13,6 @@ sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
 ctc_clusters <- readRDS("data/ctc_clusters.rds")
 
 # Subset to cancer cells in CTC cluster
-# ctcs <- sce[,colData(sce)$new_clusters %in% c(4,5,8)]
 ctcs <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 ctcs <- ctcs[,colData(ctcs)$condition == "cancer"]
 
@@ -92,7 +91,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = heatmap_metadata$patient_id,
 
 ht <- Heatmap(all_samples_heatmap, column_km = 4, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-I","SCLC-A","SCLC-N"))
 
 all_samples_ht <- draw(ht)
 
@@ -120,7 +119,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = curr_metadata$patient_id,
 
 ht <- Heatmap(naive_heatmap, column_km = 4,top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-I","SCLC-A","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-N", "SCLC-P","SCLC-I","SCLC-A"))
 
 naive_ht <- draw(ht)
 
@@ -147,7 +146,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = curr_metadata$patient_id,
 
 ht <- Heatmap(treated_heatmap, column_km = 4,top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-A","SCLC-I","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-I","SCLC-A","SCLC-N"))
 
 treated_ht <- draw(ht)
 
@@ -187,7 +186,7 @@ dev.off()
 clusters <- column_order(all_samples_ht)
 
 # Rename clusters
-names(clusters) <- c("A","P","I","N")
+names(clusters) <- c("P","I","A","N")
 
 # Create dataframe of cell IDs and associated subtypes
 subtypes_df <- list()
