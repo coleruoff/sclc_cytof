@@ -26,7 +26,7 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
-colData(sce)$new_clusters <- cluster_ids(sce, "meta4")
+colData(sce)$new_clusters <- cluster_ids(sce, "meta5")
 
 
 
@@ -37,11 +37,19 @@ colnames(xy) <- c("x", "y")
 df <- data.frame(colData(sce), xy, check.names = FALSE)
 
 
+# cluster_colors <- c(
+#   "#E57373",  # muted red
+#   "#64B5F6",  # muted blue
+#   "#81C784",  # muted green
+#   "#FFB74D"   # muted orange
+# )
+
 cluster_colors <- c(
   "#E57373",  # muted red
+  "#FFB74D",  # muted orange
+  "#BA68C8",  # muted purple
   "#64B5F6",  # muted blue
-  "#81C784",  # muted green
-  "#FFB74D"   # muted orange
+  "#81C784"  # muted green
 )
 
 

@@ -23,14 +23,6 @@ ctcs <- ctcs[rowData(ctcs)$marker_class == "state",]
 colData(ctcs)$cell_id <- 1:nrow(colData(ctcs))
 colData(ctcs)$cell_id <- paste0("cell_",1:nrow(colData(ctcs)))
 
-# Remove patients with less than 10 cells
-patients_to_keep <- as.data.frame(colData(ctcs)) %>% 
-  dplyr::count(patient_id) %>% 
-  dplyr::filter(n > 30) %>%
-  pull(patient_id) %>% 
-  as.character()
-
-ctcs <- ctcs[,colData(ctcs)$patient_id %in% patients_to_keep]
 
 ################################################################################
 # Create heatmap

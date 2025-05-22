@@ -17,6 +17,13 @@ sce <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 
 dim(sce)
 
+as.data.frame(colData(sce)) %>% 
+  dplyr::count(tarla,collection_id) %>% 
+  distinct() %>% 
+  dplyr::count(tarla)
+
+
+
 sce <- CATALYST::cluster(sce, features = "state",
                          xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
 

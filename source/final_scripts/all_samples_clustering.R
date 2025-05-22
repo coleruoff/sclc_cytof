@@ -6,6 +6,8 @@ set.seed(script_seed)
 
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
 
+sce <- sce[,sce$sample_type == "blood"]
+
 dim(sce)
 
 colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "cancer"))
@@ -17,21 +19,21 @@ markers_to_use <- as.data.frame(rowData(sce)) %>%
   pull(marker_name)
 
 
-markers_to_use <- markers_to_use[-which(markers_to_use %in% c("NeuroD1","ASCL1","POU2F3","p-YAP","SLUG","Twist"))]
+# markers_to_use <- markers_to_use[-which(markers_to_use %in% c("NeuroD1","ASCL1","POU2F3","p-YAP","SLUG","Twist"))]
 
 
 table(sce$condition)
 dim(sce)
 
-sce <- CATALYST::cluster(sce, features = markers_to_use,
-                         xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
-
-sce <- runDR(sce, "UMAP", cells = 5e3, features = markers_to_use)
-
-# sce <- CATALYST::cluster(sce, features = "state",
+# sce <- CATALYST::cluster(sce, features = markers_to_use,
 #                          xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
 # 
-# sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
+# sce <- runDR(sce, "UMAP", cells = 5e3, features = markers_to_use)
+
+sce <- CATALYST::cluster(sce, features = "state",
+                         xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
+
+sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 

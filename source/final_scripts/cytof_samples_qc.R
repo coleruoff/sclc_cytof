@@ -3,6 +3,37 @@ source("source/sclc_cytof_functions.R")
 
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object_no_qc.rds")
 
+markers <- as.data.frame(rowData(sce)) %>% 
+  dplyr::filter(marker_class == "state") %>% 
+  pull(marker_name)
+
+temp <- sce[markers,sce$collection_id == "NJH29-1"]
+
+p1 <- plotExprs(temp, color_by = "experiment_id", assay = "exprs")
+
+################################################################################
+# Perform batch correction
+batch <- as.factor(colData(sce)$experiment_id)
+
+design <- model.matrix(~ 0 + factor(colData(sce)$condition))  # one-hot encoding of conditions
+colnames(design) <- levels(factor(colData(sce)$condition))
+
+corrected_exprs <- removeBatchEffect(assay(sce, "exprs"), batch = batch, design = design)
+
+assay(sce, "exprs") <- corrected_exprs
+
+
+################################################################################
+
+temp <- sce[markers,sce$collection_id == "NJH29-1"]
+
+p2 <- plotExprs(temp, color_by = "experiment_id", assay = "exprs")
+
+p1
+p2
+
+################################################################################
+
 # Get samples that are run in multiple experiments
 to_test <- as.data.frame(sce@colData) %>% 
   dplyr::select(experiment_id,collection_id) %>% 
@@ -32,7 +63,12 @@ plotExprs(temp, color_by = "experiment_id", assay = "exprs")
 ################################################################################
 # sce <- sce[,sce$experiment_id != "531050"]
 
-# sce <- sce[,sce$patient_id != "SC443"]
+# Remove blood bank samples
+blood_bank_samples <- paste0("NORMAL", 7:20)
+
+length(unique(sce$patient_id))
+
+sce <- sce[,!sce$patient_id %in% blood_bank_samples]
 
 ################################################################################
 # remove collections with < 30 cells

@@ -32,7 +32,7 @@ all_experiments <- all_experiments[!grepl("old",all_experiments)]
 markers_to_use <- readRDS("data/markers_to_use.rds")
 
 all_metadata <- list()
-all_files <- c()
+# all_files <- c()
 all_flowsets <- list()
 for(curr_experiment in all_experiments){
   curr_experiment_id <- strsplit(curr_experiment, "_")[[1]][2]
@@ -51,7 +51,7 @@ for(curr_experiment in all_experiments){
   all_flowsets <- append(all_flowsets,curr_flowSet_subset)
   
   
-  all_files <- append(all_files, curr_files)
+  # all_files <- append(all_files, curr_files)
   
   # Create metadata
   all_metadata <- append(all_metadata, list(create_metadata(curr_files,curr_experiment_id)))
@@ -67,7 +67,6 @@ clinical_metadata <- read.csv("data/cytof_metadata.csv")
 # Select the clinical metadata you want to keep
 clinical_metadata <- clinical_metadata[,1:12]
 
-# all_metadata <- merge(clinical_metadata, all_metadata, by = colnames(all_metadata)[-1])
 all_metadata <- merge(clinical_metadata, all_metadata, by = "data_id")
 
 
@@ -75,9 +74,12 @@ all_metadata <- merge(clinical_metadata, all_metadata, by = "data_id")
 all_metadata$filenames <- sapply(all_metadata$filenames, FUN = function(x) strsplit(x, "/")[[1]][[4]])
 
 # Subset flowset and metadata to only include blood samples
-files_to_keep <- all_metadata %>% 
+files_to_keep <- all_metadata %>%
   dplyr::filter(sample_type == "blood") %>%
   pull(filenames)
+
+# files_to_keep <- intersect(all_metadata$filenames,names(final_flowset@frames))
+
 
 final_flowset <- final_flowset[files_to_keep]
 
@@ -103,17 +105,6 @@ factor_colnames <- factor_colnames[-which(colnames(metadata_to_use) == "data_id"
 sce <- prepData(final_flowset, panel = marker_info, md=metadata_to_use, features = marker_info$fcs_colname,
                 md_cols = list(file = "filenames", id = "data_id", factors = factor_colnames))
 
-
-
-# Perform batch correction
-batch <- as.factor(colData(sce)$experiment_id)
-
-design <- model.matrix(~ 0 + factor(colData(sce)$condition))  # one-hot encoding of conditions
-colnames(design) <- levels(factor(colData(sce)$condition))
-
-corrected_exprs <- removeBatchEffect(assay(sce, "exprs"), batch = batch, design = design)
-
-assay(sce, "exprs") <- corrected_exprs
 
 saveRDS(sce, "data/cytof_objects/sclc_all_samples_object_no_qc.rds")
 
