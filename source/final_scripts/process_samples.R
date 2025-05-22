@@ -110,9 +110,13 @@ sce <- prepData(final_flowset, panel = marker_info, md=metadata_to_use, features
 
 # Perform batch correction
 batch <- as.factor(colData(sce)$experiment_id)
-corrected_exprs <- removeBatchEffect(assay(sce, "exprs"), batch=batch)
-assay(sce, "exprs") <- corrected_exprs
 
+design <- model.matrix(~ 0 + factor(colData(sce)$condition))  # one-hot encoding of conditions
+colnames(design) <- levels(factor(colData(sce)$condition))
+
+corrected_exprs <- removeBatchEffect(assay(sce, "exprs"), batch = batch, design = design)
+
+assay(sce, "exprs") <- corrected_exprs
 
 saveRDS(sce, "data/cytof_objects/sclc_all_samples_object_no_qc.rds")
 

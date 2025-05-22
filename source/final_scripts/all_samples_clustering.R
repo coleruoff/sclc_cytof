@@ -8,6 +8,7 @@ sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
 
 dim(sce)
 
+
 colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "cancer"))
 sce@metadata$experiment_info$condition <- factor(sce@metadata$experiment_info$condition, levels=c("normal", "cancer"))
 
@@ -25,6 +26,8 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
+
+# plotDR(sce, color_by = "meta9",facet_by = "experiment_id")
 
 ################################################################################
 
@@ -47,8 +50,8 @@ cluster_colors <- c(
   "#FFB74D",  # muted orange
   "#81C784",  # muted green
   "#BA68C8",  # muted purple
-  "#64B5F6",  # muted blue
   "#FFF176",  # soft yellow
+  "#64B5F6",  # muted blue
   "#A1887F",  # warm tan
   "#F48FB1",  # muted pink
   "#4DB6AC"   # soft teal
@@ -115,7 +118,7 @@ dev.off()
 
 ################################################################################
 # plot with non-ctcs being translucent
-df$ctc <- ifelse(df$new_clusters %in% c(4,5,8), "ctc", "non-ctc")
+df$ctc <- ifelse(df$new_clusters %in% c(6,9), "ctc", "non-ctc")
 
 p1 <- ggplot(df)+
   geom_point(aes(x=x, y=y, color=new_clusters,alpha=ctc),size=.01)+

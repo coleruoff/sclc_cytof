@@ -73,5 +73,22 @@ jpeg("figures/all_samples_cluster_diff_abundance_barplots.jpg", width=120,height
 print(p1)
 dev.off()
 
+ctc_clusters <- c()
+for(i in unique(cluster_prop_df$new_clusters)){
+  cancer_freq <- cluster_prop_df %>% 
+    dplyr::filter(significant == "*" & new_clusters == i & condition == "Cancer") %>%
+    pull(freq)
+  
+  normal_freq <- cluster_prop_df %>% 
+    dplyr::filter(significant == "*" & new_clusters == i & condition == "Normal") %>%
+    pull(freq)
+  
+  if(length(cancer_freq) > 0){
+    if(cancer_freq > normal_freq){
+      ctc_clusters <- append(ctc_clusters, i)
+    }
+  }
+}
 
+saveRDS(as.numeric(ctc_clusters), "data/ctc_clusters.rds")
 

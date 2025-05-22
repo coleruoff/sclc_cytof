@@ -8,8 +8,7 @@ metric_to_use <- "median"
 # Differential expression
 
 # Set significantly cancer abundant clusters
-# signif_clusters <- c(4,5,8)
-signif_clusters <- c(1,2)
+signif_clusters <- readRDS("data/ctc_clusters.rds")
 
 sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
 

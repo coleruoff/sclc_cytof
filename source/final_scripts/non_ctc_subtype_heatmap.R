@@ -10,9 +10,10 @@ set.seed(42)
 ################################################################################
 sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
 
+ctc_clusters <- readRDS("data/ctc_clusters.rds")
+
 # Subset to cancer cells NOT in CTC cluster
-# ctcs <- sce[,!colData(sce)$new_clusters %in% c(4,5,8)]
-ctcs <- sce[,!colData(sce)$new_clusters %in% c(1,2)]
+ctcs <- sce[,!colData(sce)$new_clusters %in% ctc_clusters]
 ctcs <- ctcs[,colData(ctcs)$condition == "cancer"]
 
 # Subset to only state markers

@@ -14,18 +14,13 @@ to_test <- as.data.frame(sce@colData) %>%
   as.character()
 
 
-
-
 # Checking SC454-1
 temp <- sce[,sce$collection_id == "SC454-1"]
 
 plotExprs(temp, color_by = "experiment_id", assay = "exprs")
 
-temp <- sce[,sce$collection_id == "NJH29-1"]
-
-temp@assays@data$batch_corrected_exprs
-
-plotExprs(temp, color_by = "experiment_id",assay = "batch_corrected_exprs")
+temp <- sce[,sce$collection_id == "SC414-1"]
+plotExprs(temp, color_by = "experiment_id",assay = "exprs")
 
 ################################################################################
 #remove experiment 531050
