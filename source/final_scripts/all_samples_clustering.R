@@ -6,21 +6,14 @@ set.seed(script_seed)
 
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
 
-sce <- sce[,sce$sample_type == "blood"]
-
-dim(sce)
-
 colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "cancer"))
 sce@metadata$experiment_info$condition <- factor(sce@metadata$experiment_info$condition, levels=c("normal", "cancer"))
-
 
 markers_to_use <- as.data.frame(rowData(sce)) %>% 
   dplyr::filter(marker_class == "state") %>% 
   pull(marker_name)
 
-
 # markers_to_use <- markers_to_use[-which(markers_to_use %in% c("NeuroD1","ASCL1","POU2F3","p-YAP","SLUG","Twist"))]
-
 
 table(sce$condition)
 dim(sce)
@@ -37,12 +30,14 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
-plotDR(sce, color_by = "meta9",facet_by = "experiment_id")
+plotDR(sce, color_by = "meta8",facet_by = "experiment_id")
+
+plotDR(sce, color_by = "experiment_id", facet_by = "sample_type")
 
 ################################################################################
 
 # Add new cluster assignments to colData
-colData(sce)$new_clusters <- cluster_ids(sce, "meta9")
+colData(sce)$new_clusters <- cluster_ids(sce, "meta8")
 
 # Save data with cluster assignments
 saveRDS(sce, "data/cytof_objects/sclc_all_samples_with_clusters.rds")
@@ -63,7 +58,8 @@ cluster_colors <- c(
   "#FFF176",  # soft yellow
   "#F48FB1",  # muted pink
   "#A1887F",  # warm tan
-  "#64B5F6",  # muted blue
+  "#64B5F6",
+  "#64B544",# muted blue
   "#4DB6AC"   # soft teal
 )
  

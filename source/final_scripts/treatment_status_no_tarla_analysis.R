@@ -16,11 +16,12 @@ sce <- sce[,colData(sce)$treatment_status != "unknown"]
 sce <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 
 # Remove cells treated with tarla
-sce <- sce[,colData(sce)$tarla == "F"]
+sce <- sce[,is.na(colData(sce)$tarla) | colData(sce)$tarla != "post"]
 
 dim(sce)
 table(sce$condition)
 table(sce$treatment_status)
+table(sce$tarla)
 
 sce <- CATALYST::cluster(sce, features = "state",
                          xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
@@ -30,7 +31,7 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
-colData(sce)$new_clusters <- cluster_ids(sce, "meta6")
+colData(sce)$new_clusters <- cluster_ids(sce, "meta3")
 
 
 # Plot UMAP manually

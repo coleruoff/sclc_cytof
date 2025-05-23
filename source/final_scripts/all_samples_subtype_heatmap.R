@@ -83,7 +83,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = heatmap_metadata$patient_id,
 
 ht <- Heatmap(all_samples_heatmap, column_km = 4, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-I","SCLC-A","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"))
 
 all_samples_ht <- draw(ht)
 
@@ -111,7 +111,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = curr_metadata$patient_id,
 
 ht <- Heatmap(naive_heatmap, column_km = 4,top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-N", "SCLC-P","SCLC-I","SCLC-A"))
+              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"))
 
 naive_ht <- draw(ht)
 
@@ -138,7 +138,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = curr_metadata$patient_id,
 
 ht <- Heatmap(treated_heatmap, column_km = 4,top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-I","SCLC-A","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"))
 
 treated_ht <- draw(ht)
 
@@ -178,7 +178,7 @@ dev.off()
 clusters <- column_order(all_samples_ht)
 
 # Rename clusters
-names(clusters) <- c("P","I","A","N")
+names(clusters) <- c("A","P","I","N")
 
 # Create dataframe of cell IDs and associated subtypes
 subtypes_df <- list()

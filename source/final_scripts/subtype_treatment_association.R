@@ -17,7 +17,7 @@ contin_table <- table(ctcs$treatment_status, ctcs$subtype) %>%
 # colnames(contin_table) <- c("ASCL1","Inflamed","NeuroD1","POU2F3")
 
 
-contin_table <- contin_table[c(1,3),]
+contin_table <- contin_table[c(2,4),]
 
 test_res <- chisq.test(contin_table)
 
@@ -65,7 +65,7 @@ status_plot
 contin_table <- table(ctcs$tarla, ctcs$subtype) %>% 
   as.data.frame.matrix()
 
-contin_table <- contin_table[c(1,2),]
+contin_table <- contin_table[c(2,3),]
 
 test_res <- chisq.test(contin_table)
 
@@ -89,7 +89,7 @@ res_df <- as.data.frame(as.table(residuals)) %>%
            TRUE            ~ ""))
 
 colnames(res_df) <- c("status","subtype","residual","adj_pval","stars")
-res_df$status <- ifelse(res_df$status == "T", "Post-Tarlatamab","Pre-Tarlatamab")
+res_df$status <- ifelse(res_df$status == "post", "Post-Tarlatamab","Pre-Tarlatamab")
 
 tarla_plot <- ggplot(res_df, aes(x = subtype, y = status)) +
   geom_point(aes(size = abs(residual), fill = residual), shape = 21, color = "black", stroke = 0.6) +

@@ -12,7 +12,7 @@ colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "can
 sce@metadata$experiment_info$condition <- factor(sce@metadata$experiment_info$condition, levels=c("normal", "cancer"))
 
 sce <- sce[,colData(sce)$condition == "cancer"]
-sce <- sce[,colData(sce)$treatment_status != "unknown"]
+sce <- sce[,colData(sce)$treatment_status != "NA"]
 sce <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 
 dim(sce)
@@ -27,7 +27,7 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
-colData(sce)$new_clusters <- cluster_ids(sce, "meta6")
+colData(sce)$new_clusters <- cluster_ids(sce, "meta4")
 
 
 # Plot UMAP manually

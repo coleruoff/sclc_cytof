@@ -12,7 +12,7 @@ colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "can
 sce@metadata$experiment_info$condition <- factor(sce@metadata$experiment_info$condition, levels=c("normal", "cancer"))
 
 sce <- sce[,colData(sce)$condition == "cancer"]
-sce <- sce[,colData(sce)$tarla != "unknown"]
+sce <- sce[,!is.na(colData(sce)$tarla)]
 sce <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 
 dim(sce)
@@ -74,7 +74,7 @@ p1 <- ggplot(df)+
 p1
 
 
-facet_names <- c('T'="Post-Tarlatamab",'F'="Pre-Tarlatamab")
+facet_names <- c('post'="Post-Tarlatamab",'pre'="Pre-Tarlatamab")
 p2 <- ggplot(df)+
   geom_point(aes(x=x, y=y, color=new_clusters),size=.01)+
   facet_wrap(~tarla,labeller=as_labeller(facet_names))+
@@ -143,7 +143,7 @@ cluster_prop_df <- cluster_prop_df %>%
   mutate(height = max(freq))
 
 
-cluster_prop_df$tarla <- ifelse(cluster_prop_df$tarla == "T", "Post-Tarlatamab", "Pre-Tarlatamab")
+cluster_prop_df$tarla <- ifelse(cluster_prop_df$tarla == "post", "Post-Tarlatamab", "Pre-Tarlatamab")
 
 cluster_prop_df$tarla <- factor(cluster_prop_df$tarla, levels=c("Pre-Tarlatamab","Post-Tarlatamab"))
 
@@ -207,7 +207,7 @@ subtype_prop_df <- subtype_prop_df %>%
   mutate(height = max(freq))
 
 
-subtype_prop_df$tarla <- ifelse(subtype_prop_df$tarla == "T", "Post-Tarlatamab", "Pre-Tarlatamab")
+subtype_prop_df$tarla <- ifelse(subtype_prop_df$tarla == "post", "Post-Tarlatamab", "Pre-Tarlatamab")
 
 subtype_prop_df$tarla <- factor(subtype_prop_df$tarla, levels=c("Pre-Tarlatamab","Post-Tarlatamab"))
 

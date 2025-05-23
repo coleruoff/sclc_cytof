@@ -12,7 +12,7 @@ colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "can
 sce@metadata$experiment_info$condition <- factor(sce@metadata$experiment_info$condition, levels=c("normal", "cancer"))
 
 sce <- sce[,colData(sce)$condition == "cancer"]
-sce <- sce[,colData(sce)$tarla != "unknown"]
+sce <- sce[,!is.na(colData(sce)$tarla)]
 sce <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
 
 dim(sce)

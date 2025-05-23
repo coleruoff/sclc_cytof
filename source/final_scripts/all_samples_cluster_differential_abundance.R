@@ -85,7 +85,7 @@ for(i in unique(cluster_prop_df$new_clusters)){
     dplyr::filter(significant == "*" & new_clusters == i & condition == "Normal") %>%
     pull(freq)
   
-  if(length(cancer_freq) > 0){
+  if(length(cancer_freq) > 0 & length(normal_freq) > 0){
     if(cancer_freq > normal_freq){
       ctc_clusters <- append(ctc_clusters, i)
     }
