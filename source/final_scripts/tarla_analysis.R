@@ -28,9 +28,6 @@ sce@metadata$delta_area
 
 colData(sce)$new_clusters <- cluster_ids(sce, "meta5")
 
-
-
-
 # Plot UMAP manually
 xy <- reducedDim(sce, "UMAP")[, 1:2]
 colnames(xy) <- c("x", "y")
@@ -59,7 +56,7 @@ p1 <- ggplot(df)+
   xlab("UMAP 1")+
   ylab("UMAP 2")+
   labs(color = "Clusters")+
-  scale_color_manual(name = "Clusters",values=cluster_colors)+
+  # scale_color_manual(name = "Clusters",values=cluster_colors)+
   theme_classic() +
   guides(color = guide_legend(override.aes = list(size=5)))+
   theme(panel.grid.minor = element_blank(), 
@@ -73,15 +70,16 @@ p1 <- ggplot(df)+
 
 p1
 
+df$tarla <- factor(df$tarla, levels=c("pre","post"))
 
-facet_names <- c('post'="Post-Tarlatamab",'pre'="Pre-Tarlatamab")
+facet_names <- c('pre'="Pre-Tarlatamab",'post'="Post-Tarlatamab")
 p2 <- ggplot(df)+
   geom_point(aes(x=x, y=y, color=new_clusters),size=.01)+
   facet_wrap(~tarla,labeller=as_labeller(facet_names))+
   xlab("UMAP 1")+
   ylab("UMAP 2")+
   labs(color = "Clusters")+
-  scale_color_manual(name = "Clusters",values=cluster_colors)+
+  # scale_color_manual(name = "Clusters",values=cluster_colors)+
   guides(color = guide_legend(override.aes = list(size=5)))+
   scale_alpha_manual(values = c("ctc" = 1, "non-ctc" = 0.05))+
   theme_classic() +

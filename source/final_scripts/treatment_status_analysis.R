@@ -27,7 +27,9 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
-colData(sce)$new_clusters <- cluster_ids(sce, "meta4")
+CATALYST::plotDR(sce, color_by = "meta5",facet_by = "experiment_id")
+
+colData(sce)$new_clusters <- cluster_ids(sce, "meta5")
 
 
 # Plot UMAP manually

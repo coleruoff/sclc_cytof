@@ -11,7 +11,7 @@ set.seed(42)
 sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
 
 ctc_clusters <- readRDS("data/ctc_clusters.rds")
-# ctc_clusters <- c(6)
+ctc_clusters <- c(1,4)
 
 # Subset to cancer cells in CTC cluster
 ctcs <- sce[,colData(sce)$new_clusters %in% ctc_clusters]
@@ -179,7 +179,7 @@ dev.off()
 clusters <- column_order(all_samples_ht)
 
 # Rename clusters
-names(clusters) <- c("A","P","I","N")
+names(clusters) <- c("N","I","A","P")
 
 # Create dataframe of cell IDs and associated subtypes
 subtypes_df <- list()

@@ -46,7 +46,7 @@ p1 <- ggplot(plot_df,aes(x=as.numeric(logfc), y=protein, fill=logfc))+
 
 p1
 
-jpeg(glue("figures/subtype_{metric_to_use}_de_all.jpg"), width=140,height=100, units = "mm", res=1000)
+jpeg(glue("figures/subtype_{metric_to_use}_de_1_4.jpg"), width=140,height=100, units = "mm", res=1000)
 print(p1)
 dev.off()
 

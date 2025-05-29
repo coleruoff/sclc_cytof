@@ -31,7 +31,7 @@ sce <- runDR(sce, "UMAP", cells = 5e3, features = "state")
 
 sce@metadata$delta_area
 
-colData(sce)$new_clusters <- cluster_ids(sce, "meta3")
+colData(sce)$new_clusters <- cluster_ids(sce, "meta6")
 
 
 # Plot UMAP manually
