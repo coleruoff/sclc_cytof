@@ -111,3 +111,7 @@ cytof_de <- function(sce, method = "wilcox", metric = "median", ident = "new_clu
   
   return(df)
 }
+
+
+# Write sessionInfo to text file
+writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
