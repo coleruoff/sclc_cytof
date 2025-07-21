@@ -29,7 +29,7 @@ source("source/final_scripts/normal_subtype_detection_heatmap.R")
 source("source/final_scripts/normal_subtype_expression_heatmap.R")
 source("source/final_scripts/normal_subtype_expression_boxplots.R")
 
-source("source/final_scripts/subtype_treatment_association.R")
+source("source/final_scripts/binary_lmm_subtype_association.R")
 
 # Treatment status analysis 
 source("source/final_scripts/treatment_status_expr_boxplots.R")
@@ -46,6 +46,8 @@ source("source/final_scripts/pre_post_tarla_subtype_barplots.R")
 source("source/final_scripts/longitudinal_subtype_barplots.R")
 source("source/final_scripts/longitudinal_expression_heatmap.R")
 
+# Alluvial Plots
+source("source/final_scripts/subtype_treatment_alluvial.R")
 
 # Protein Expression UMAPs
 # source("source/final_scripts/all_samples_ctc_expression_umaps.R")

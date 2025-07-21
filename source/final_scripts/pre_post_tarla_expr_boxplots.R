@@ -48,7 +48,7 @@ stat.test <- plot_df %>%
 p <- ggviolin(plot_df, x="tarla" ,y="expression", fill="tarla", lwd=.3, outlier.size = .1, draw_quantiles = .5)+
   # stat_compare_means(aes(group = tarla), label = "p.signif", label.x.npc = "center", label.y = 5.5,size=4.5)+ 
   facet_wrap(~antigen,nrow=2)+
-  ylim(0,9)+
+  ylim(0,NA)+
   labs(y="Expression",
        x= "Tarlatamab Status")+
   scale_fill_manual(name = "Subtype",values=c("#E63946","#457B9D"))+

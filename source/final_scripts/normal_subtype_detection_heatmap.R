@@ -97,9 +97,9 @@ all_samples_ht <- draw(ht)
 p1 <- fviz_nbclust(t(all_samples_heatmap), kmeans, method='silhouette')+
   ggtitle("Optimal Number of Subclusters (Non-CTCs)")
 
-jpeg("figures/normal_optimal_clusters.jpg", width = 200, height = 100, units = "mm", res = 1200)
-print(p1)
-dev.off()
+# jpeg("figures/normal_optimal_clusters.jpg", width = 200, height = 100, units = "mm", res = 1200)
+# print(p1)
+# dev.off()
 
 #############################################################################
 # ALL SAMPLES

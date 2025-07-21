@@ -12,7 +12,6 @@ cluster_colors <- c("#dd4b33", "#F1FAEE", "#A8DADC", "#457B9D")
 # Plot subtype proportions for each patient across all samples
 
 long_patients <- as.data.frame(ctcs@colData) %>% 
-  filter(tarla != "post" | is.na(tarla)) %>% 
   select(patient_id,sample_num) %>% 
   distinct() %>% 
   dplyr::count(patient_id) %>% 
@@ -20,19 +19,27 @@ long_patients <- as.data.frame(ctcs@colData) %>%
   pull(patient_id) %>% 
   as.character()
 
-# Remove samples with too few cells
-patients_to_remove <- ctcs %>% 
+samples_to_remove <- ctcs %>% 
   colData() %>% 
   as.data.frame() %>% 
   count(patient_id,sample_num) %>% 
   filter(n < 10) %>% 
-  pull(patient_id) %>% 
+  mutate(collection_id = paste0(patient_id,"-",sample_num)) %>% 
+  pull(collection_id) %>% 
   unique() %>% 
   as.character()
 
-long_patients <- long_patients[!long_patients %in% patients_to_remove]
 
-long_data <- ctcs[,ctcs$patient_id %in% long_patients]
+long_data <- ctcs[,ctcs$patient_id %in% long_patients & !ctcs$collection_id %in% samples_to_remove]
+
+
+long_patients <- long_data@colData %>% 
+  as.data.frame() %>% 
+  count(patient_id,sample_num) %>% 
+  count(patient_id) %>% 
+  filter(n > 1) %>% 
+  pull(patient_id)
+
 
 #Calculate proportions of each subtype for each sample
 plot_df <- as.data.frame(long_data@colData) %>% 
@@ -65,6 +72,9 @@ df_renumbered <- plot_df %>%
 plot_df <- merge(plot_df,df_renumbered,by="sample_id")
 
 plot_df$new_sample_id <- factor(plot_df$new_sample_id)
+
+plot_df <- plot_df %>% 
+  filter(plot_df$patient_id %in% long_patients)
 
 p <- ggplot(plot_df)+
   geom_col(aes(x=new_sample_id,y=freq,fill=subtype))+

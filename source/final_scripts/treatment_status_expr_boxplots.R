@@ -70,10 +70,12 @@ stat.test <- plot_df %>%
 stat.test
 
 
+
+
 p <- ggviolin(plot_df, x="treatment_status" ,y="expression", fill="treatment_status", lwd=.3, outlier.size = .1,draw_quantiles =0.5)+
   # stat_compare_means(aes(group = treatment_status), label = "p.signif", label.x.npc = "center", label.y = 5.5,size=4.5)+
   facet_wrap(~antigen,nrow=2)+
-  ylim(0,9)+
+  ylim(0,NA)+
   labs(y="Expression",
        x= "")+
   scale_fill_manual(name = "Subtype",values=c("#E63946","#457B9D"))+
@@ -87,7 +89,7 @@ p <- ggviolin(plot_df, x="treatment_status" ,y="expression", fill="treatment_sta
 stat.test <- stat.test %>% add_xy_position(x = "treatment_status")
 p <- p + stat_pvalue_manual(stat.test, label = "p.adj.signif")
 
-
+p
 
 jpeg(glue("figures/treatment_status_expression_violinplot.jpg"), width=360,height=140, units = "mm", res=1000)
 print(p)

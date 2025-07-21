@@ -16,7 +16,6 @@ col_fun = colorRamp2(c(-2, -1, 0, 1, 2),
 ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
 
 long_patients <- as.data.frame(ctcs@colData) %>% 
-  filter(tarla != "post" | is.na(tarla)) %>% 
   select(patient_id,sample_num) %>% 
   distinct() %>% 
   dplyr::count(patient_id) %>% 
@@ -24,19 +23,28 @@ long_patients <- as.data.frame(ctcs@colData) %>%
   pull(patient_id) %>% 
   as.character()
 
-patients_to_remove <- ctcs %>% 
+samples_to_remove <- ctcs %>% 
   colData() %>% 
   as.data.frame() %>% 
   count(patient_id,sample_num) %>% 
   filter(n < 10) %>% 
-  pull(patient_id) %>% 
+  mutate(collection_id = paste0(patient_id,"-",sample_num)) %>% 
+  pull(collection_id) %>% 
   unique() %>% 
   as.character()
 
-long_patients <- long_patients[!long_patients %in% patients_to_remove]
+
+long_data <- ctcs[,ctcs$patient_id %in% long_patients & !ctcs$collection_id %in% samples_to_remove]
 
 
-long_data <- ctcs[,ctcs$patient_id %in% long_patients]
+long_patients <- long_data@colData %>% 
+  as.data.frame() %>% 
+  count(patient_id,sample_num) %>% 
+  count(patient_id) %>% 
+  filter(n > 1) %>% 
+  pull(patient_id)
+
+
 
 #Scale expression
 assay(long_data, "exprs") <- t(scale(t(assay(long_data, "exprs"))))
@@ -86,14 +94,14 @@ legend_obj <- color_mapping_legend(dummy_ht@ht_list[[1]]@matrix_color_mapping, p
 
 jpeg(glue("figures/longitudinal_expression_heatmap.jpg"), width=260,height=150, units = "mm", res=1000)
 
-# Now draw the 16 heatmaps without legend in a 4x4 grid
+# Now draw the heatmaps without legend in a 2x4 grid
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(1, 6, widths = unit.c(unit(rep(1, 5), "null"), unit(2.8, "cm")))))
+pushViewport(viewport(layout = grid.layout(2, 5, widths = unit.c(unit(rep(1, 5), "null"), unit(.5, "cm")))))
 
 
 for (i in seq_along(heatmap_list)) {
-  row <- ceiling(i / 5)
-  col <- (i - 1) %% 5 + 1
+  row <- ceiling(i / 4.5)
+  col <- (i - 1) %% 4.5 + 1
   vp <- viewport(layout.pos.row = row, layout.pos.col = col)
   pushViewport(vp)
   
@@ -106,66 +114,9 @@ for (i in seq_along(heatmap_list)) {
 }
 
 # Add the legend on the right side of the page
-pushViewport(viewport(x = 0.95, y = 0.5, width = 1, height = 1, just = c("right", "center"), layout.pos.col = 6))
+pushViewport(viewport(x = 0.95, y = 0, width = 1, height = 1, just = c("right", "center"), layout.pos.col = 5, layout.pos.row = 1))
 grid.draw(legend_obj)
 upViewport()
 
 
 dev.off()
-
-################################################################################
-# Remove tarla patients and plot heatmaps again
-# patients_to_use <- ctcs %>% 
-#   colData() %>% 
-#   as.data.frame() %>% 
-#   filter(tarla != "post") %>% 
-#   select(patient_id,collection_id) %>% 
-#   distinct() %>% 
-#   count(patient_id) %>% 
-#   filter(n > 1) %>% 
-#   pull(patient_id)
-# 
-# 
-# 
-# length(heatmap_list)
-# 
-# dummy_ht <- draw(heatmap_list[[1]])
-# 
-# legend_obj <- color_mapping_legend(dummy_ht@ht_list[[1]]@matrix_color_mapping, plot = FALSE)
-# 
-# jpeg(glue("figures/longitudinal_notarla_expression_heatmap.jpg"), width=300,height=100, units = "mm", res=1000)
-# 
-# # Now draw the 16 heatmaps without legend in a 4x4 grid
-# grid.newpage()
-# pushViewport(viewport(layout = grid.layout(1,6, widths = unit.c(unit(rep(1, 3), "null"), unit(2.8, "cm")))))
-# pushViewport(viewport(layout = grid.layout(1,6, widths = unit.c(unit(rep(1, 5), "null"), unit(2.8, "cm")))))
-# 
-# for (i in seq_along(heatmap_list)) {
-#   col <- i
-#   vp <- viewport(layout.pos.row = 1, layout.pos.col = col)
-#   pushViewport(vp)
-#   draw(heatmap_list[[i]], newpage = FALSE,
-#        show_heatmap_legend = FALSE,
-#        show_annotation_legend = FALSE)
-#   upViewport()
-# }
-# # for (i in seq_along(heatmap_list)) {
-# #   row <- ceiling(i / 3)
-# #   col <- (i - 1) %% 3 + 1
-# #   vp <- viewport(layout.pos.row = row, layout.pos.col = col)
-# #   pushViewport(vp)
-# #   draw(heatmap_list[[i]], newpage = FALSE,
-# #        show_heatmap_legend = FALSE,
-# #        show_annotation_legend = FALSE)
-# #   upViewport()
-# # }
-# 
-# # Add the legend on the right side of the page
-# pushViewport(viewport(x = 0.95, y = 0.5, width = 1, height = 1, just = c("right", "center"), layout.pos.col = 6))
-# grid.draw(legend_obj)
-# upViewport()
-# 
-# 
-# dev.off()
-
-
