@@ -155,31 +155,9 @@ create_expression_heatmap <- function(sce, group, markers, curr_title="", scale=
   }
   
   
-  
-  # col_fun = colorRamp2(c(min(scaled_heatmap), 0, max(scaled_heatmap)), c("blue3","lightyellow", "red3"))
-  # col_fun = colorRamp2(c(min(scaled_heatmap), -1, 0, 1, max(scaled_heatmap)), c("blue", "steelblue2","lightyellow", "red1" ,"red3"))
-  # col_fun = colorRamp2(c(min(scaled_heatmap), 0, max(scaled_heatmap)), c("purple","white", "yellow"))
-  # col_fun = colorRamp2(c(min(scaled_heatmap), 0, max(scaled_heatmap)), c("aquamarine3","white", "orange"))
-  # col_fun = colorRamp2(c(min(scaled_heatmap), 0, max(scaled_heatmap)), c("magenta2","white", "limegreen"))
-  
-  col_fun = colorRamp2(c(-3, -1, 0, 1, 3), 
-  c("#313695",  # deep blue
-    "#74add1",  # light blue
-    "#f7f7f7",  # white (center, 0)
-    "#f46d43",  # light red
-    "#a50026"))
-  
-  ht <- Heatmap(t(scaled_heatmap),column_names_rot = 0,col = col_fun,
-                cluster_columns = F, cluster_rows=F, column_title = curr_title,
-                row_names_gp = gpar(fontsize = 12),column_names_gp = gpar(fontsize = 12),
-                heatmap_legend_param = list(
-                  title = "   Scaled\nExpression",      
-                  title_gp = gpar(fontsize = 12), 
-                  labels_gp = gpar(fontsize = 12),
-                  legend_height = unit(1, "cm"))
-  )
+  return(scaled_heatmap)
+ 
 
-  return(ht)
   
   # return(t(scaled_heatmap))
 }

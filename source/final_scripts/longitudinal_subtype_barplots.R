@@ -86,18 +86,18 @@ p <- ggplot(plot_df)+
        y="Percentage",
        fill="Subtype")+
   theme_classic()+
-  theme(axis.title = element_text(size=14),
-        axis.text = element_text(size=10, color="black"),
+  theme(axis.title = element_text(size=20),
+        axis.text = element_text(size=12, color="black"),
         strip.text = element_text(face = "bold", size=12), 
         strip.background = element_blank(),
-        legend.title = element_text(size=12),
-        legend.text = element_text(size=12))
+        legend.title = element_text(size=20),
+        legend.text = element_text(size=18))
 
 
 p
 
 
-jpeg("figures/all_patients_longitudinal_subtype_barplots.jpg", width=225,height=150, units = "mm", res=1000)
+tiff("figures/all_patients_longitudinal_subtype_barplots.tiff", width=225,height=150, units = "mm", res=600)
 print(p)
 dev.off()
 

@@ -1,71 +1,10 @@
 
-
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
 
+sample_df <- list()
 
-
-
-
-# normal patients
-normal_patients <- sce %>% 
-  colData() %>% 
-  as.data.frame() %>% 
-  dplyr::filter(condition == "normal") %>% 
-  pull(patient_id) %>% 
-  unique() %>% 
-  gsub("NORMAL","",.) %>% 
-  as.numeric() %>% 
-  sort() %>% 
-  paste0("NORMAL",.)
-
-
-length(normal_patients)
-# write.table(cancer_patients,"data/test.txt",quote = F,row.names = F)
-
-# cancer patients
-cancer_patients <- sce %>% 
-  colData() %>% 
-  as.data.frame() %>% 
-  dplyr::filter(condition == "cancer") %>% 
-  pull(patient_id) %>% 
-  unique() %>% 
-  gsub("SC","",.) %>% 
-  as.numeric() %>% 
-  sort() %>% 
-  paste0("SC",.)
-
-length(cancer_patients)
-
-# naives
-sce %>% 
-  colData() %>% 
-  as.data.frame() %>% 
-  dplyr::filter(treatment_status == "naive") %>% 
-  distinct() %>% 
-  arrange(date_run) %>% 
-  select(collection_id) %>% 
-  distinct() %>% 
-  pull(collection_id) %>% 
-  unique() %>% 
-  as.character() %>% 
-  length()
-
-# treated
-sce %>% 
-  colData() %>% 
-  as.data.frame() %>% 
-  dplyr::filter(treatment_status == "treated") %>% 
-  distinct() %>% 
-  arrange(date_run) %>% 
-  select(collection_id) %>% 
-  distinct() %>% 
-  pull(collection_id) %>% 
-  unique() %>% 
-  as.character() %>% 
-  length()
-
-
-# number of liquid biopsies
+################################################################################
+# number of total liquid biopsies
 sce %>% 
   colData() %>%
   as.data.frame() %>% 
@@ -75,67 +14,236 @@ sce %>%
   as.character() %>% 
   length()
 
+################################################################################
+# normal patients
+count1 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(condition == "normal") %>% 
+  pull(patient_id) %>% 
+  unique() %>% 
+  gsub("NORMAL","",.) %>% 
+  as.numeric() %>% 
+  sort() %>% 
+  paste0("NORMAL",.) %>% 
+  length()
 
-# longitudinal with tarla
-sce %>% 
+# normal LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(condition == "normal") %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+# cancer patients
+count1 <- sce %>% 
   colData() %>% 
   as.data.frame() %>% 
   dplyr::filter(condition == "cancer") %>% 
-  count(patient_id,collection_id) %>% 
-  count(patient_id) %>% 
-  filter(n > 1) %>% 
-  nrow()
+  pull(patient_id) %>% 
+  unique() %>% 
+  gsub("SC","",.) %>% 
+  as.numeric() %>% 
+  sort() %>% 
+  paste0("SC",.) %>% 
+  length()
 
-# longitudinal without tarla
-sce %>% 
+
+# cancer patient LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(condition == "cancer") %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+################################################################################
+# naive patients
+count1 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(treatment_status == "naive") %>% 
+  pull(patient_id) %>% 
+  unique() %>% 
+  length()
+
+# naive patient LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(treatment_status == "naive") %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+# treated with SOC patients
+count1 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(treatment_status == "treated" & (tarla == "pre" | is.na(tarla))) %>% 
+  pull(patient_id) %>% 
+  unique() %>% 
+  length()
+
+
+# treated with SOC patient LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(treatment_status == "treated" & (tarla == "pre" | is.na(tarla))) %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+# longitudinal getting SOC patients
+soc_long_pts <- sce %>% 
   colData() %>% 
   as.data.frame() %>% 
   dplyr::filter(condition == "cancer" & is.na(tarla)) %>% 
   count(patient_id,collection_id) %>% 
   count(patient_id) %>% 
   filter(n > 1) %>% 
-  nrow()
-
-
-# pre tarla
-pre_tarla_samples <- sce %>% 
-  colData() %>% 
-  as.data.frame() %>% 
-  dplyr::filter(tarla == "pre" ) %>% 
   pull(patient_id) %>% 
-  unique() %>% 
-  as.character() 
+  as.character()
 
-# post tarla
-post_tarla_samples <- sce %>% 
+count1 <- length(soc_long_pts)
+
+# longitudinal getting SOC LBs
+count2 <- sce %>% 
   colData() %>% 
   as.data.frame() %>% 
-  dplyr::filter(tarla == "post") %>% 
-  pull(patient_id) %>% 
+  dplyr::filter(patient_id %in% soc_long_pts) %>% 
+  pull(collection_id) %>% 
   unique() %>% 
-  as.character() 
+  length()
 
-intersect(sort(pre_tarla_samples),
-          sort(post_tarla_samples))
-
-
-sce %>% 
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+  
+################################################################################
+#  tarla patients
+count1 <- sce %>% 
   colData() %>% 
   as.data.frame() %>% 
-  dplyr::filter(!is.na(tarla)) %>% 
+  dplyr::filter(tarla == "pre" | tarla == "post") %>% 
   pull(patient_id) %>% 
   unique() %>% 
   as.character() %>% 
   length()
 
-# Tarla-only Longitudinal 
-sce %>% 
+# pre tarla patient LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(tarla == "pre" | tarla == "post") %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  as.character() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+# pre tarla patients
+count1 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(tarla == "pre") %>% 
+  pull(patient_id) %>% 
+  unique() %>% 
+  as.character() %>% 
+  length()
+
+# pre tarla patient LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(tarla == "pre") %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  as.character() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+# post tarla patients
+count1 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(tarla == "post") %>% 
+  pull(patient_id) %>% 
+  unique() %>% 
+  as.character() %>% 
+  length()
+
+# post tarla patient LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(tarla == "post") %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  as.character() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+# longitudinal getting tarla patients
+tarla_long_pts <- sce %>% 
   colData() %>% 
   as.data.frame() %>% 
   dplyr::filter(condition == "cancer" & !is.na(tarla)) %>% 
   count(patient_id,collection_id) %>% 
   count(patient_id) %>% 
   filter(n > 1) %>% 
-  nrow()
+  pull(patient_id) %>% 
+  as.character()
+
+count1 <- length(soc_long_pts)
+
+# longitudinal getting tarla LBs
+count2 <- sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  dplyr::filter(patient_id %in% tarla_long_pts) %>% 
+  pull(collection_id) %>% 
+  unique() %>% 
+  length()
+
+sample_df[["Patients"]] <- append(sample_df[["Patients"]], count1)
+sample_df[["Liquid Biopsies"]] <- append(sample_df[["Liquid Biopsies"]], count2)
+
+################################################################################
+final_df <- as.data.frame(sample_df)
+
+rownames(final_df) <- c("Healthy Donors","SCLC Samples","Naive","Treated SOC","Longitudinal SOC","Tarla","Pre-Tarla","Post-Tarla","Longitudinal Tarla")
+
+final_df
 
 
+
+
+
+intersect(pre_tarla_pt,post_tarla_pt)

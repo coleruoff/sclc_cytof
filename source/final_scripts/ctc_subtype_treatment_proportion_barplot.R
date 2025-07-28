@@ -31,9 +31,9 @@ plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","I"))
 plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive","Treated")
 plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive","Treated"))
 
-ggplot(plot_df)+
+p1 <- ggplot(plot_df)+
   geom_col(aes(x=collection_id,y=freq,fill=subtype))+
-  geom_text(aes(label=total,x=collection_id,y=101.5),size=2)+
+  geom_text(aes(label=total,x=collection_id,y=103),size=3)+
   # facet_wrap(~treatment_status,scales="free")+
   facet_grid(. ~ treatment_status, scales = "free", space = "free") +
   scale_fill_manual(values = cluster_colors)+
@@ -41,8 +41,18 @@ ggplot(plot_df)+
   labs(x="Sample",
        y="Percentage",
        fill="Subtype")+
-  theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1))
+  theme(axis.text.x = element_text(size=12, angle=45,hjust=1,vjust=1),
+        axis.text.y = element_text(size=16),
+        axis.title = element_text(size=20),
+        legend.title = element_text(size=20),
+        legend.text = element_text(size=18),
+        strip.text = element_text(size=20))
+
+p1
   
 
+tiff("figures/ctc_subtype_sample_proportion_barplots.tiff", width=300,height=100, units = "mm", res=600)
+print(p1)
+dev.off()
 
 length(unique(plot_df$collection_id))

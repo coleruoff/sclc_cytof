@@ -53,33 +53,35 @@ all_results <- bind_rows(results_list)
 
 
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, 16,1)) %>% 
+  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
 
-p1 <- ggplot(plot_df,aes(x=log_or,y=subtype))+
-  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5)+
-  geom_point(aes(x=log_or,y=subtype, shape = factor(signif),color=subtype),size=4,fill="white",show.legend = F)+
-  scale_shape_manual(values = c("1" = 1, "16" = 16)) +
+p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
+  geom_point(aes(shape = factor(signif)),size=9,fill="white",show.legend = F)+
+  scale_shape_manual(values = c("ns" = 1, "s" = 16)) +
+  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5,show.legend = F)+
   geom_vline(xintercept = 0, linetype = 2)+
-  xlim(-3,3)+
-  scale_y_discrete(limits=rev)+
   scale_color_manual(values = cluster_colors)+
+  xlim(-1.5,1.5)+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-1.5, y=4.5, label = "Female") +
-  annotate("text", x=1.5, y=4.5, label = "Male") +
-  theme(axis.text = element_text(size=12,angle = 0, hjust = 1),
-        axis.title = element_text(size=14),
-        axis.text.x = element_text(angle = 0, hjust = .5),
-        theme(plot.title = element_text(hjust = 0.5)))
+  annotate("text", x=-1, y=4.5, label = "Female", angle=0,size=5) +
+  annotate("text", x=1, y=4.5, label = "Male", angle=0,size=5) +
+  theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
+        axis.title = element_text(size=20),
+        axis.text.x = element_text(angle = 0, hjust = .5))
 
 
-jpeg("figures/subtype_sex_or_results.jpg", width=100,height=180, units = "mm", res=1000)
+p1
+
+
+tiff("figures/subtype_sex_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p1)
 dev.off()
 
@@ -133,35 +135,35 @@ all_results <- bind_rows(results_list)
 
 
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, 16,1)) %>% 
+  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
 
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
 
-
-p2 <- ggplot(plot_df,aes(x=log_or,y=subtype))+
-  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5)+
-  geom_point(aes(x=log_or,y=subtype, shape = factor(signif),color=subtype),size=4,fill="white",show.legend = F)+
-  scale_shape_manual(values = c("1" = 1, "16" = 16)) +
+p2 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
+  geom_point(aes(shape = factor(signif)),size=9,fill="white",show.legend = F)+
+  scale_shape_manual(values = c("ns" = 1, "s" = 16)) +
+  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5,show.legend = F)+
   geom_vline(xintercept = 0, linetype = 2)+
-  xlim(-3,3)+
-  scale_y_discrete(limits=rev)+
   scale_color_manual(values = cluster_colors)+
+  xlim(-.5,.5)+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-1.5, y=4.5, label = "Younger") +
-  annotate("text", x=1.5, y=4.5, label = "Older") +
-  theme(axis.text = element_text(size=12,angle = 0, hjust = 1),
-        axis.title = element_text(size=14),
-        axis.text.x = element_text(angle = 0, hjust = .5),
-        theme(plot.title = element_text(hjust = 0.5)))
+  annotate("text", x=-1, y=4.5, label = "Younger", angle=0,size=5) +
+  annotate("text", x=1, y=4.5, label = "Older", angle=0,size=5) +
+  theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
+        axis.title = element_text(size=20),
+        axis.text.x = element_text(angle = 0, hjust = .5))
 
 
-jpeg("figures/subtype_age_or_results.jpg", width=100,height=180, units = "mm", res=1000)
+
+p2
+tiff("figures/subtype_age_or_results.tiff", width=150,height=200, units = "mm", res=600)
 print(p2)
 dev.off()
 
@@ -216,36 +218,35 @@ all_results <- bind_rows(results_list)
 
 
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, 16,1)) %>% 
+  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
 
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
 
 
-
-p3 <- ggplot(plot_df,aes(x=log_or,y=subtype))+
-  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5)+
-  geom_point(aes(x=log_or,y=subtype, shape = factor(signif),color=subtype),size=4,fill="white",show.legend = F)+
-  scale_shape_manual(values = c("1" = 1, "16" = 16)) +
+p3 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
+  geom_point(aes(shape = factor(signif)),size=9,fill="white",show.legend = F)+
+  scale_shape_manual(values = c("ns" = 1, "s" = 16)) +
+  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5,show.legend = F)+
   geom_vline(xintercept = 0, linetype = 2)+
-  xlim(-3,3)+
-  scale_y_discrete(limits=rev)+
   scale_color_manual(values = cluster_colors)+
+  xlim(-1.5,1.5)+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-1.5, y=4.5, label = "Naive") +
-  annotate("text", x=1.5, y=4.5, label = "Treated") +
-  theme(axis.text = element_text(size=12,angle = 0, hjust = 1),
-        axis.title = element_text(size=14),
-        axis.text.x = element_text(angle = 0, hjust = .5),
-        theme(plot.title = element_text(hjust = 0.5)))
+  annotate("text", x=-1, y=4.5, label = "Naive", angle=0,size=5) +
+  annotate("text", x=1, y=4.5, label = "Treated", angle=0,size=5) +
+  theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
+        axis.title = element_text(size=20),
+        axis.text.x = element_text(angle = 0, hjust = .5))
 
+p3
 
-jpeg("figures/subtype_treatment_status_or_results.jpg", width=100,height=180, units = "mm", res=1000)
+tiff("figures/subtype_treatment_status_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p3)
 dev.off()
 
@@ -300,7 +301,7 @@ all_results <- bind_rows(results_list)
 
 
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, 16,1)) %>% 
+  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
@@ -308,26 +309,29 @@ plot_df <- all_results %>%
 
 
 
-p4 <- ggplot(plot_df,aes(x=log_or,y=subtype))+
-  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5)+
-  geom_point(aes(x=log_or,y=subtype, shape = factor(signif),color=subtype),size=4,fill="white",show.legend = F)+
-  scale_shape_manual(values = c("1" = 1, "16" = 16)) +
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
+
+p4 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
+  geom_point(aes(shape = factor(signif)),size=9,fill="white",show.legend = F)+
+  scale_shape_manual(values = c("ns" = 1, "s" = 16)) +
+  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5,show.legend = F)+
   geom_vline(xintercept = 0, linetype = 2)+
-  xlim(-3,3)+
-  scale_y_discrete(limits=rev)+
   scale_color_manual(values = cluster_colors)+
+  xlim(-1.5,1.5)+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-1.5, y=4.5, label = "Pre-Tarlatamab") +
-  annotate("text", x=1.5, y=4.5, label = "Post-Tarlatamab") +
-  theme(axis.text = element_text(size=12,angle = 0, hjust = 1),
-        axis.title = element_text(size=14),
-        axis.text.x = element_text(angle = 0, hjust = .5),
-        theme(plot.title = element_text(hjust = 0.5)))
+  annotate("text", x=-1, y=4.5, label = "Pre-Tarlatamab", angle=0,size=5) +
+  annotate("text", x=1, y=4.5, label = "Post-Tarlatamab", angle=0,size=5) +
+  theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
+        axis.title = element_text(size=20),
+        axis.text.x = element_text(angle = 0, hjust = .5)) 
+  
+  
+ 
 
-
-jpeg("figures/subtype_tarla_or_results.jpg", width=100,height=180, units = "mm", res=1000)
+p4
+tiff("figures/subtype_tarla_or_results.tiff", width=100, height=200, units = "mm", res=600)
 print(p4)
 dev.off()
 

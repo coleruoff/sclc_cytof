@@ -6,7 +6,7 @@ set.seed(script_seed)
 
 ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
 
-markers_to_use <- c("ASCL1", "NeuroD1", "POU2F3", "DLL3", "Alcam", "E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist", "SLUG", "PD-L1", "p-YAP", "CD44", "CD24")
+markers_to_use <- c("ASCL1", "NeuroD1", "POU2F3", "E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist", "DLL3", "Alcam","SLUG", "PD-L1", "p-YAP", "CD44", "CD24")
 
 ################################################################################
 
@@ -48,21 +48,21 @@ stat.test <- plot_df %>%
 p <- ggviolin(plot_df, x="tarla" ,y="expression", fill="tarla", lwd=.3, outlier.size = .1, draw_quantiles = .5)+
   # stat_compare_means(aes(group = tarla), label = "p.signif", label.x.npc = "center", label.y = 5.5,size=4.5)+ 
   facet_wrap(~antigen,nrow=2)+
-  ylim(0,NA)+
+  ylim(0,9)+
   labs(y="Expression",
        x= "Tarlatamab Status")+
   scale_fill_manual(name = "Subtype",values=c("#E63946","#457B9D"))+
-  theme(axis.title = element_text(size=14),
-        axis.text.x = element_text(size=10,angle=45,hjust=1,vjust=1),
-        strip.text = element_text(face = "bold", size=12), 
+  theme(axis.title = element_text(size=20),
+        axis.text.x = element_text(size=16,angle=45,hjust=1,vjust=1),
+        strip.text = element_text(face = "bold", size=16), 
         strip.background = element_blank())+
   rremove("legend")
 
 stat.test <- stat.test %>% add_xy_position(x = "tarla")
-p <- p + stat_pvalue_manual(stat.test, label = "p.adj.signif")
+p <- p + stat_pvalue_manual(stat.test, label = "p.adj.signif",size=5)
 
 
-jpeg(glue("figures/pre_post_tarla_expression_violinplot.jpg"), width=360,height=140, units = "mm", res=1000)
+tiff(glue("figures/pre_post_tarla_expression_violinplot.tiff"), width=360,height=140, units = "mm", res=600)
 print(p)
 dev.off()
 

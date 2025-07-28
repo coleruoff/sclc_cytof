@@ -7,7 +7,7 @@ data_df <- sce@colData %>%
   select(new_clusters,condition,sample_id) 
 
 results_list <- list()
-for(curr_cluster in sort(unique(curr_data$new_clusters))){
+for(curr_cluster in sort(unique(data_df$new_clusters))){
  
   data_df$cluster <- as.factor(as.integer(data_df$new_clusters == curr_cluster))
   
@@ -47,31 +47,39 @@ plot_df <- all_results %>%
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
 
-
-p1 <- ggplot(plot_df,aes(x=log_or,y=cluster))+
-  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5)+
-  geom_point(aes(x=log_or,y=cluster, shape = factor(signif),color=cluster),size=4,fill="white",show.legend = F)+
+p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(cluster),color=cluster))+
+  geom_point(aes(shape = factor(signif)),size=9,fill="white",show.legend = F)+
   scale_shape_manual(values = c("1" = 1, "16" = 16)) +
+  geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height= 0.1, linewidth = .5,show.legend = F)+
   geom_vline(xintercept = 0, linetype = 2)+
-  xlim(-6,6)+
-  scale_y_discrete(limits=rev)+
+  xlim(-5,5)+
+  annotate("text", y=8.4, x=-2.5, label = "Normal", angle=0,size=5) +
+  annotate("text", y=8.4, x=2.5, label = "Cancer", angle=0,size=5) +
   labs(y="Cluster",
        x="log(OR)")+
   theme_classic()+
-  theme(axis.text = element_text(size=12,angle = 0, hjust = 1),
-        axis.title = element_text(size=14),
+  theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
+        axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 0, hjust = .5))
+
+
 
 
 p1
 
-jpeg("figures/all_samples_cluster_condition_or_results.jpg", width=100,height=180, units = "mm", res=1000)
+tiff("figures/all_samples_cluster_condition_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p1)
 dev.off()
 
 
+ # cancer_enriched_clusters <- plot_df %>% 
+#   filter(log_or > 0 & pval < 0.05) %>% 
+#   pull(cluster) %>% 
+#   unique() %>% 
+#   as.numeric()
+
 cancer_enriched_clusters <- plot_df %>% 
-  filter(log_or > 0 & pval < 0.05 ) %>% 
+  filter(log_or > 0) %>% 
   pull(cluster) %>% 
   unique() %>% 
   as.numeric()

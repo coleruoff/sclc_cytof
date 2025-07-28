@@ -92,7 +92,7 @@ dummy_ht <- draw(heatmap_list[[1]])
 
 legend_obj <- color_mapping_legend(dummy_ht@ht_list[[1]]@matrix_color_mapping, plot = FALSE)
 
-jpeg(glue("figures/longitudinal_expression_heatmap.jpg"), width=260,height=150, units = "mm", res=1000)
+tiff(glue("figures/longitudinal_expression_heatmap.tiff"), width=260,height=150, units = "mm", res=600)
 
 # Now draw the heatmaps without legend in a 2x4 grid
 grid.newpage()

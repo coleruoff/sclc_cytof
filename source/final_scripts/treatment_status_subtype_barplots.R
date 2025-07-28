@@ -29,23 +29,23 @@ plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","
 
 p <- ggplot(plot_df)+
   geom_col(aes(x=treatment_status,y=freq,fill=subtype))+
-  geom_text(aes(label=total,x=treatment_status), y=105,size = 3)+
+  geom_text(aes(label=total,x=treatment_status), y=105,size = 5)+
   ylim(0,105)+
   scale_fill_manual(name = "Subtype",values=cluster_colors)+
   labs(x="",
        y="Percentage",
        fill="Subtype")+
   theme_classic()+
-  theme(axis.title = element_text(size=14),
-        axis.text = element_text(size=10, color="black"),
+  theme(axis.title = element_text(size=20),
+        axis.text = element_text(size=16, color="black"),
         strip.text = element_text(face = "bold", size=12), 
         strip.background = element_blank(),
-        legend.title = element_text(size=12),
-        legend.text = element_text(size=12))
+        legend.title = element_text(size=20),
+        legend.text = element_text(size=18))
 
 p
 
-jpeg("figures/treatment_status_subtype_barplots.jpg", width=120,height=100, units = "mm", res=1000)
+tiff("figures/treatment_status_subtype_barplots.tiff", width=140,height=100, units = "mm", res=600)
 print(p)
 dev.off()
 

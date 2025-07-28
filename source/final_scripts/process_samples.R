@@ -102,8 +102,10 @@ names(final_flowset@frames)[!names(final_flowset@frames) %in% all_metadata$filen
 ################################################################################
 # Only retain files/samples that appear in both flowset and metadata
 ################################################################################
+pe_samples_to_keep <- c("SC443-1P")
 
 # Filter out non-blood samples
+# all_metadata <- all_metadata[all_metadata$sample_type == "blood" | all_metadata$collection_id %in% pe_samples_to_keep,]
 all_metadata <- all_metadata[all_metadata$sample_type == "blood",]
 
 files_to_keep <- intersect(all_metadata$filenames,names(final_flowset@frames))

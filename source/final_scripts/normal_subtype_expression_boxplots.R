@@ -27,8 +27,9 @@ p2 <- p2+
        y="Expression")+
   scale_fill_manual(
     values = c("A" = "#dd4b33","N" = "#F1FAEE","P"= "#A8DADC", "I" = "#457B9D"))
-  
-  ################################################################################
+
+p2  
+################################################################################
 
 jpeg(glue("figures/normal_subtype_tf_expression_boxplot.jpg"), width=160,height=160, units = "mm", res=1000)
 print(p1)

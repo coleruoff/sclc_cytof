@@ -76,7 +76,7 @@ for(curr_patient in patients_to_use){
 
 
 
-jpeg(glue("figures/treatment_status_expression_heatmap.jpg"), width=160,height=160, units = "mm", res=1000)
+tiff(glue("figures/treatment_status_expression_heatmap.tiff"), width=160,height=160, units = "mm", res=600)
 print(all_ht[[1]])
 dev.off()
 

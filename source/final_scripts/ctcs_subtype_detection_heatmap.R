@@ -11,9 +11,7 @@ set.seed(script_seed)
 ################################################################################
 cancer_enriched <- readRDS("data/cytof_objects/cancer_enriched_with_clusters.rds")
 
-
 #Subset to clusters with known CTC marker profiles
-# ctcs <- cancer_enriched[,cancer_enriched$new_clusters %in% c(2,5,6,7,8)]
 ctcs <- cancer_enriched[,cancer_enriched$new_clusters %in% c(2,4,5,6,7,8)]
 
 ################################################################################
@@ -102,7 +100,14 @@ num_subclusters <- 4
 
 ht <- Heatmap(all_samples_heatmap, column_km = num_subclusters, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"),
+              row_names_gp = gpar(fontsize=20),column_title_gp = gpar(fontsize=20),
+              heatmap_legend_param = list(
+                title = "   Scaled\nExpression",      
+                title_gp = gpar(fontsize = 18), 
+                labels_gp = gpar(fontsize = 14),
+                legend_height = unit(3, "cm"),
+                grid_width = unit(.5,"cm")))
 
 all_samples_ht <- draw(ht)
 
@@ -176,7 +181,7 @@ p1 <- fviz_nbclust(t(all_samples_heatmap), kmeans, method='silhouette')+
 #############################################################################
 # ALL SAMPLES
 #############################################################################
-jpeg("figures/all_samples_ctcs_subtype_heatmap.jpg", width=300,height=120, units = "mm", res=1000)
+tiff("figures/all_samples_ctcs_subtype_heatmap.tiff", width=300,height=120, units = "mm", res=600)
 print(all_samples_ht)
 dev.off()
 #############################################################################

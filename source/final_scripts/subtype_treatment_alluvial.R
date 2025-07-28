@@ -61,7 +61,7 @@ p1 <- ggplot(data = plot_df_long,
 
 p1
 
-jpeg("figures/cell_level_alluvial_plot.jpg", width=300,height=400, units = "mm", res=1000)
+tiff("figures/cell_level_alluvial_plot.tiff", width=300,height=400, units = "mm", res=600)
 print(p1)
 dev.off()
 ################################################################################
@@ -138,7 +138,7 @@ p2 <- ggplot(data = plot_df_long,
 
 p2
 
-jpeg("figures/sample_level_alluvial_plot.jpg", width=300,height=500, units = "mm", res=1000)
+tiff("figures/sample_level_alluvial_plot.tiff", width=300,height=500, units = "mm", res=600)
 print(p2)
 dev.off()
 
@@ -223,7 +223,7 @@ p3 <- ggplot(data = plot_df_long,
 
 p3
 
-jpeg("figures/patient_level_alluvial_plot.jpg", width=300,height=500, units = "mm", res=1000)
+tiff("figures/patient_level_alluvial_plot.tiff", width=300,height=500, units = "mm", res=600)
 print(p3)
 dev.off()
 
