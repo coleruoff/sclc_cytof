@@ -45,21 +45,25 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
 
 
 
-
-
+plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
+plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
 
 
 p1 <- ggplot(data = plot_df_long,
              aes(x = category, stratum = group, alluvium = cohort, y = total)) +
   geom_flow(aes(fill=group),width=.3, aes.flow = "backward") +
   geom_stratum(aes(fill=group),width=.3) +
-  geom_text(stat = "stratum", aes(label = glue("{group}")),size=10) +
-  geom_text(stat = "stratum", aes(label = glue("\U00A0\n\nn={nn} ({freq}%)")),size=5) +
+  geom_text(stat = "stratum", aes(label = glue("{group}")),size=15) +
+  ggrepel::geom_text_repel(data=plot_df_long_left,stat = "stratum", aes(label = glue("n={nn}\n({freq}%)")),nudge_x = -.3,
+                           size=10,segment.color = NA) +
+  ggrepel::geom_text_repel(data=plot_df_long_right,stat = "stratum", aes(label = glue("n={nn}\n({freq}%)")),nudge_x = .3,
+                           size=10,segment.color = NA) +
   scale_fill_manual(name = "group",values=c("gray90","gray8 0","gray70",cluster_colors))+
   theme_void() +
   rremove("legend")
 
 p1
+# "\U00A0\n\nn={nn}\n({freq}%)"
 
 tiff("figures/cell_level_alluvial_plot.tiff", width=300,height=400, units = "mm", res=600)
 print(p1)
@@ -122,16 +126,19 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
 
 
 
+plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
+plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
+
+
 p2 <- ggplot(data = plot_df_long,
-             aes(x = category, stratum = group, alluvium = cohort, y = total, label=stats)) +
+             aes(x = category, stratum = group, alluvium = cohort, y = total)) +
   geom_flow(aes(fill=group),width=.3, aes.flow = "backward") +
   geom_stratum(aes(fill=group),width=.3) +
-  geom_text(stat = "stratum", aes(label = glue("{group}")),size=10) +
-  geom_text(stat = "stratum", aes(label = stats),size=5) +
-  # ggfittext::geom_fit_text(stat = "stratum", width = .5, min.size = 10) +
-  ggrepel::geom_text_repel(
-    aes(label = ifelse(group == "A", as.character(a_stats), NA)),
-    stat = "stratum", size = 5, direction = "y", nudge_x = .3) +
+  geom_text(stat = "stratum", aes(label = glue("{group}")),size=15) +
+  ggrepel::geom_text_repel(data=plot_df_long_left,stat = "stratum", aes(label = glue("n={nn}\n({freq}%)")),nudge_x = -.3,
+                           size=10,segment.color = NA) +
+  ggrepel::geom_text_repel(data=plot_df_long_right,stat = "stratum", aes(label = glue("n={nn}\n({freq}%)")),nudge_x = .3,
+                           size=10,segment.color = NA) +
   scale_fill_manual(name = "group",values=c("gray90","gray8 0","gray70",cluster_colors))+
   theme_void() +
   rremove("legend")
@@ -211,12 +218,20 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
   mutate(freq=sprintf("%.1f",(nn/total)*100)) 
 
 
+
+plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
+plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
+
+
 p3 <- ggplot(data = plot_df_long,
              aes(x = category, stratum = group, alluvium = cohort, y = total)) +
   geom_flow(aes(fill=group),width=.3, aes.flow = "backward") +
   geom_stratum(aes(fill=group),width=.3) +
-  geom_text(stat = "stratum", aes(label = glue("{group}")),size=10) +
-  geom_text(stat = "stratum", aes(label = glue("\U00A0\n\nn={nn} ({freq}%)")),size=5) +
+  geom_text(stat = "stratum", aes(label = glue("{group}")),size=15) +
+  ggrepel::geom_text_repel(data=plot_df_long_left,stat = "stratum", aes(label = glue("n={nn}\n({freq}%)")),nudge_x = -.3,
+                           size=10,segment.color = NA) +
+  ggrepel::geom_text_repel(data=plot_df_long_right,stat = "stratum", aes(label = glue("n={nn}\n({freq}%)")),nudge_x = .3,
+                           size=10,segment.color = NA) +
   scale_fill_manual(name = "group",values=c("gray90","gray8 0","gray70",cluster_colors))+
   theme_void() +
   rremove("legend")

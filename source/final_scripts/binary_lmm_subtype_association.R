@@ -150,12 +150,12 @@ p2 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   geom_errorbarh(aes(xmin = log_lower_or, xmax = log_upper_or), height = 0.1, linewidth = .5,show.legend = F)+
   geom_vline(xintercept = 0, linetype = 2)+
   scale_color_manual(values = cluster_colors)+
-  xlim(-.5,.5)+
+  xlim(-1,1)+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-1, y=4.5, label = "Younger", angle=0,size=5) +
-  annotate("text", x=1, y=4.5, label = "Older", angle=0,size=5) +
+  annotate("text", x=-.5, y=4.5, label = "Younger", angle=0,size=5) +
+  annotate("text", x=.5, y=4.5, label = "Older", angle=0,size=5) +
   theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
         axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 0, hjust = .5))
@@ -163,7 +163,7 @@ p2 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
 
 
 p2
-tiff("figures/subtype_age_or_results.tiff", width=150,height=200, units = "mm", res=600)
+tiff("figures/subtype_age_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p2)
 dev.off()
 
@@ -179,22 +179,21 @@ data_df <- sce@colData %>%
 data_df$treatment_status <- factor(data_df$treatment_status, levels = c("naive","treated"))
 
 
+data_df$treatment_status
+
 results_list <- list()
 for(curr_subtype in c("A","N","P","I")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
   # formula_str <- glue("curr_subtype ~ {group}")
-  
+
   model <- glmer(
     formula = as.formula(formula_str),
     family = binomial(link = "logit"),
     data = data_df)
   
-  # model <- glm(
-  #   formula = as.formula(formula_str),
-  #   family = binomial(link = "logit"),
-  #   data = data_df)
+
   
   summary(model)
   
@@ -321,8 +320,8 @@ p4 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-1, y=4.5, label = "Pre-Tarlatamab", angle=0,size=5) +
-  annotate("text", x=1, y=4.5, label = "Post-Tarlatamab", angle=0,size=5) +
+  annotate("text", x=-.75, y=4.5, label = "Pre-Tarlatamab", angle=0,size=4) +
+  annotate("text", x=.75, y=4.5, label = "Post-Tarlatamab", angle=0,size=4) +
   theme(axis.text = element_text(size=18,angle = 0, hjust = 1),
         axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 0, hjust = .5)) 
