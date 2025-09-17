@@ -1,12 +1,19 @@
+################################################################################
+# This script reads in data and then plots a heatmap consisting of proteins
+# as rows and cell clusters as columns. Each cell in the heatmap represents
+# the scaled expression of that protein in the respective cluster
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
-
+set.seed(42)
 ################################################################################
-
+# Read in data
+################################################################################
 sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
 
+################################################################################
+# Generate and save cluster x marker scaled expression heatmap
+################################################################################
 all_markers <- readRDS("data/state_markers.rds")
 
 markers_to_use <- c("ASCL1", "NeuroD1", "POU2F3", "DLL3", "Alcam", "E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist", "SLUG", "PD-L1", "p-YAP", "CD44", "CD24")
@@ -29,13 +36,6 @@ ht <- Heatmap(t(scaled_heatmap),column_names_rot = 0,col = col_fun,
                 labels_gp = gpar(fontsize = 6),
                 legend_height = unit(3, "cm"),
                 grid_width = unit(.5,"cm")))
-
-
-
-
-
-print(ht)
-
 
 
 tiff("figures/all_samples_cluster_expression_heatmap.tiff", width=200,height=60, units = "mm", res=600)

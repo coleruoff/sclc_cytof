@@ -1,22 +1,22 @@
+################################################################################
+# This script re-clusters the cells from the initial cancer-enriched clusters 
+# and plots the new clusters as a UMAP
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
 # Read in CyTOF data with cluster assignments
 ################################################################################
 sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
 
-
 cancer_enriched_clusters <- readRDS("data/cancer_enriched_clusters.rds")
 
+################################################################################
 # Subset to cancer cells in cancer_enriched cluster
+################################################################################
 cancer_enriched <- sce[,colData(sce)$new_clusters %in% cancer_enriched_clusters]
 cancer_enriched <- cancer_enriched[,colData(cancer_enriched)$condition == "cancer"]
-
-# Subset to only state markers
-# cancer_enriched <- cancer_enriched[rowData(cancer_enriched)$marker_class == "state",]
-
 
 ################################################################################
 # Cluster cells using FlowSOM then run UMAP
@@ -25,7 +25,7 @@ markers_to_use <- readRDS("data/state_markers.rds")
 # markers_to_use <- markers_to_use[-which(markers_to_use %in% c("NeuroD1","ASCL1","POU2F3","p-YAP","SLUG","Twist","p-Rb"))]
 
 cancer_enriched <- CATALYST::cluster(cancer_enriched, features = markers_to_use,
-                          xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
+                          xdim = 10, ydim = 10, maxK = 20, seed = 42)
 
 cancer_enriched <- runDR(cancer_enriched, "UMAP", cells = 5e3, features = markers_to_use)
 
@@ -81,10 +81,6 @@ p1 <- ggplot(df)+
         axis.title = element_text(size=8),
         legend.text = element_text(size=6),
         legend.title = element_text(size=8))
-
-p1 
-
-
 
 ################################################################################
 # Save figures

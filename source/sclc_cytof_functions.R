@@ -20,6 +20,7 @@ library(rstatix)
 library(ggalluvial)
 library(broom)
 library(broom.mixed)
+library(purrr)
 
 library(tidyverse)
 

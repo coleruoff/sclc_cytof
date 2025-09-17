@@ -1,6 +1,18 @@
-library(broom.mixed)
+################################################################################
+# This script fits a logistic regression mixed-effect model for each cluster to 
+# determine which condition the cluster is enriched in (i.e. Cancer vs Normal).
+# Then a forest plot displaying the log odds ratio is saved.
+################################################################################
+source("source/sclc_cytof_functions.R")
 
+################################################################################
+# Read in data
+################################################################################
 sce <- readRDS("data/cytof_objects/sclc_all_samples_with_clusters.rds")
+
+################################################################################
+# Fit logistic regression mixed-effect model for each cluster
+################################################################################
 
 data_df <- sce@colData %>% 
   as.data.frame() %>% 
@@ -9,17 +21,18 @@ data_df <- sce@colData %>%
 results_list <- list()
 for(curr_cluster in sort(unique(data_df$new_clusters))){
  
+  # binarize cluster 
   data_df$cluster <- as.factor(as.integer(data_df$new_clusters == curr_cluster))
   
   formula_str <- glue("cluster ~ condition + (1 | sample_id)")
   
-  
+  # fit model
   model <- glmer(
     formula = as.formula(formula_str),
     family = binomial(link = "logit"),
     data = data_df)
   
-  
+  # extract odds ratio, pvalue, CI and store in res
   cancer_or <- exp(fixef(model)["conditioncancer"])
   
   tidy_out <- tidy(model,effects='fixed')
@@ -37,10 +50,13 @@ for(curr_cluster in sort(unique(data_df$new_clusters))){
 # Combine into one data frame
 all_results <- bind_rows(results_list)
 
-summary(model)
+################################################################################
+# Create plot dataframe
+################################################################################
 
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, 16,1)) %>% 
+  mutate(padj = p.adjust(pval)) %>% 
+  mutate(signif = ifelse(padj < 0.05, 16,1)) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
@@ -62,28 +78,29 @@ p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(cluster),color=cluster))+
         axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 0, hjust = .5))
 
-
-
-
-p1
-
+################################################################################
+# Save figures
+################################################################################
 tiff("figures/all_samples_cluster_condition_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p1)
 dev.off()
 
+################################################################################
+# Extract p-values
+################################################################################
+cluster_adj_pvalues <- as.numeric(sprintf("%.4f",plot_df$padj))
+names(cluster_adj_pvalues) <- paste0("Cluster ", 1:nrow(plot_df))
 
- # cancer_enriched_clusters <- plot_df %>% 
-#   filter(log_or > 0 & pval < 0.05) %>% 
-#   pull(cluster) %>% 
-#   unique() %>% 
-#   as.numeric()
+cluster_adj_pvalues
 
+################################################################################
+# Extract cancer-enriched clusters
+################################################################################
 cancer_enriched_clusters <- plot_df %>% 
   filter(log_or > 0) %>% 
   pull(cluster) %>% 
   unique() %>% 
   as.numeric()
-
 
 saveRDS(cancer_enriched_clusters, "data/cancer_enriched_clusters.rds")
 

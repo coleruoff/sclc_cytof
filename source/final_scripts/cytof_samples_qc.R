@@ -1,3 +1,10 @@
+################################################################################
+# This script performs quality control on the CyTOF data. 
+#   - removing outlier experiment(s)
+#   - removing low viability samples
+#   - removing non-SCLC samples
+#   - performing proportional down-sampling
+################################################################################
 source("source/sclc_cytof_functions.R")
 
 set.seed(42)

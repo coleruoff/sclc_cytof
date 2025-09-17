@@ -1,7 +1,10 @@
+################################################################################
+# This script reads in UMAP coordinate data then plot UMAP with reduced opacity
+# of the non cancer-enriched clusters.
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
 df <- readRDS("data/all_samples_umap_data.rds")
 
@@ -31,10 +34,6 @@ p1 <- ggplot(df)+
         legend.title = element_text(size=12))  
 
 
-p1
-
-
-
 facet_names <- c('normal'="Normal",'cancer'="Cancer")
 p2 <- ggplot(df)+
   geom_point(aes(x=x, y=y, color=new_clusters,alpha=cancer_enriched),size=.01)+
@@ -55,7 +54,6 @@ p2 <- ggplot(df)+
         legend.text = element_text(size=10),
         legend.title = element_text(size=12))   
 
-p2
 jpeg("figures/all_samples_cluster_opacity.jpg", width=120,height=100, units = "mm", res=1000)
 print(p1)
 dev.off()

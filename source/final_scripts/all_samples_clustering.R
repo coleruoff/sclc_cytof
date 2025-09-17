@@ -1,12 +1,15 @@
+################################################################################
+# This script reads in the CyTOF data and clusters the cells into sub-populations. 
+# The cells are initially clustering using the FlowSOM algorithm then merged 
+# into consensus clusters. The clusters are then visualized using UMAP.
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
 # Read in data
 ################################################################################
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
-
 
 # Reorder factors
 colData(sce)$condition <- factor(colData(sce)$condition, levels=c("normal", "cancer"))
@@ -24,7 +27,7 @@ markers_to_use <- state_markers
 # markers_to_use <- markers_to_use[-which(markers_to_use %in% c("NeuroD1","ASCL1","POU2F3","p-YAP","SLUG","Twist"))]
 
 sce <- CATALYST::cluster(sce, features = markers_to_use,
-                         xdim = 10, ydim = 10, maxK = 20, seed = script_seed)
+                         xdim = 10, ydim = 10, maxK = 20, seed = 42)
 
 sce <- runDR(sce, "UMAP", cells = 5e3, features = markers_to_use)
 
@@ -41,7 +44,6 @@ CATALYST::plotDR(sce, color_by = "experiment_id")
 
 # Add new cluster assignments to colData
 colData(sce)$new_clusters <- cluster_ids(sce, "meta8")
-
 
 # Save data with cluster assignments
 saveRDS(sce, "data/cytof_objects/sclc_all_samples_with_clusters.rds")
@@ -85,8 +87,6 @@ p1 <- ggplot(df)+
         axis.title = element_text(size=12),
         legend.text = element_text(size=10),
         legend.title = element_text(size=12))
-  
-p1
 
 # Plot UMAP faceted by condition
 facet_names <- c('normal'="Normal",'cancer'="Cancer")
@@ -109,8 +109,6 @@ p2 <- ggplot(df)+
       legend.text = element_text(size=10),
       legend.title = element_text(size=12))  
 
-p2
-
 ################################################################################
 # Save figures
 ################################################################################
@@ -118,11 +116,9 @@ jpeg("figures/all_samples_cluster.jpg", width=120,height=100, units = "mm", res=
 print(p1)
 dev.off()
 
-
 jpeg("figures/all_samples_normal_vs_cancer_cluster.jpg", width=180,height=100, units = "mm", res=1000)
 print(p2)
 dev.off()
-
 
 jpeg("figures/all_samples_cluster_delta_plot.jpg", width=180,height=100, units = "mm", res=1000)
 print(delta_plot)

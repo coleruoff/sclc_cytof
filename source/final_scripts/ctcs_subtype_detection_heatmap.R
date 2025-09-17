@@ -1,11 +1,10 @@
+################################################################################
 # This script plots a heatmap of the SCLC subtype TFs expression. Then assigns each cell
 # to a heatmap based on the expression of the TFs.
-
 ################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
 # Read in CyTOF data with cluster assignments
 ################################################################################
@@ -59,6 +58,7 @@ col_fun = colorRamp2(c(-2, -1, 0, 1, 2),
                        "#f7f7f7",  # white (center, 0)
                        "#f46d43",  # light red
                        "#a50026"))
+
 # Create experiment ID annotation
 # colors_to_use <- colorRampPalette(brewer.pal(12,"Paired"))(length(unique(heatmap_metadata$experiment_id)))
 # names(colors_to_use) <- unique(heatmap_metadata$experiment_id)
@@ -83,20 +83,8 @@ patient_anno <- HeatmapAnnotation("Patient ID" = heatmap_metadata$patient_id,
                                   show_annotation_name = T,
                                   annotation_legend_param = list(ncol=2))
 
-# Get optimal k for kmeans
-# silh_res <- fviz_nbclust(t(all_samples_heatmap), kmeans, method='silhouette')
-# num_subclusters <- which(silh_res$data$y == max(silh_res$data$y))
-# num_subclusters
+
 num_subclusters <- 4
-
-# col_fun = colorRamp2(c(min(heatmap_scaled), -1, 0, 1, max(heatmap_scaled)), 
-#                      c("#313695",  # deep blue
-#                        "#74add1",  # light blue
-#                        "#f7f7f7",  # white (center, 0)
-#                        "#f46d43",  # light red
-#                        "#a50026"))
-
-
 
 ht <- Heatmap(all_samples_heatmap, column_km = num_subclusters, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
@@ -169,33 +157,22 @@ ht <- Heatmap(treated_heatmap, column_km = num_subclusters, top_annotation = sam
 treated_ht <- draw(ht)
 
 #############################################################################
-# Find optimal number of subclusters
-#############################################################################
-p1 <- fviz_nbclust(t(all_samples_heatmap), kmeans, method='silhouette')+
-  ggtitle("Optimal Number of Subclusters (CTCs)")
-
-# jpeg("figures/all_samples_ctcs_optimal_clusters.jpg", width = 200, height = 100, units = "mm", res = 1200)
-# print(p1)
-# dev.off()
-
+# Save figures
 #############################################################################
 # ALL SAMPLES
-#############################################################################
 tiff("figures/all_samples_ctcs_subtype_heatmap.tiff", width=300,height=120, units = "mm", res=600)
 print(all_samples_ht)
 dev.off()
-#############################################################################
+
 # NAIVE SAMPLES
-#############################################################################
-jpeg("figures/all_samples_ctcs_naive_subtype_heatmap.jpg", width=300,height=100, units = "mm", res=1000)
-print(naive_ht)
-dev.off()
-#############################################################################
-#TREATED SAMPLES
-#############################################################################
-jpeg("figures/all_samples_ctcs_treated_subtype_heatmap.jpg", width=300,height=100, units = "mm", res=1000)
-print(treated_ht)
-dev.off()
+# tiff("figures/all_samples_ctcs_naive_subtype_heatmap.tiff", width=300,height=100, units = "mm", res=1000)
+# print(naive_ht)
+# dev.off()
+# 
+# #TREATED SAMPLES
+# tiff("figures/all_samples_ctcs_treated_subtype_heatmap.tiff", width=300,height=100, units = "mm", res=1000)
+# print(treated_ht)
+# dev.off()
 
 #############################################################################
 # Assign subtype to each cell based on kmeans clustering

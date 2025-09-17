@@ -1,12 +1,17 @@
+################################################################################
+# This script reads in all CyTOF FCS files along with the metadata associated 
+# with each experiment. Files are filtered based on the focus of the analysis 
+# then saved as a SingleCellExperiment which is subjected to QC in the next step.
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
-
+set.seed(42)
+################################################################################
+# This function creates metadata for each file that acts as linker to full 
+# metadata csv
+################################################################################
 create_metadata <- function(files,experiment_id){
 
-  # This function creates metadata for each file that acts as linker to full metadata csv
-  
   filenames <- as.character(files)
   
   # sample information

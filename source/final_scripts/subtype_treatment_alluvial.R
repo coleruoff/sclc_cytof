@@ -1,22 +1,21 @@
+################################################################################
+# This script plots alluvial plots indicating the proportions of subtypes and treatment status.
+#   1) Cell level alluvial
+#   2) Sample level alluvial
+#   3) Sample level alluvial (excluding longitudinal patients)
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
-
+# Read in data
+################################################################################
 ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
 
 cluster_colors <- c("#dd4b33", "#D1DACF", "#A8DADC", "#457B9D")
 ################################################################################
-# Cell level
+# Cell level alluvial
 ################################################################################
-ctcs@colData %>% 
-  as.data.frame() %>% 
-  pull(patient_id) %>% 
-  unique() %>% 
-  length()
-
-
 
 plot_df <- ctcs@colData %>% 
   as.data.frame() %>% 
@@ -34,12 +33,6 @@ plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","S
 plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
 
 
-# to_lodes_form(data.frame(plot_df),
-#               key = "category", value = "group", id = "cohort",
-#               axes = 1:2) %>% 
-#   add_count(group)
-
-
 plot_df_long <- to_lodes_form(data.frame(plot_df),
                               key = "category", value = "group", id = "cohort",
                               axes = 1:2) %>% 
@@ -52,9 +45,6 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
 
 plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
 plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
-
-
-# plot_df_long$group <- factor(plot_df_long$group, levels = c("Tarla","SOC","Naive","I","P","N","A"))
 
 p1 <- ggplot(data = plot_df_long,
              aes(x = category, stratum = group, alluvium = cohort, y = total)) +
@@ -73,13 +63,11 @@ p1 <- ggplot(data = plot_df_long,
 
 p1
 
-# "\U00A0\n\nn={nn}\n({freq}%)"
-
 tiff("figures/cell_level_alluvial_plot.tiff", width=400,height=250, units = "mm", res=600)
 print(p1)
 dev.off()
 ################################################################################
-# Sample level
+# Sample level alluvial
 ################################################################################
 samples_to_use <- ctcs@colData %>% 
   as.data.frame() %>% 
@@ -162,7 +150,7 @@ print(p2)
 dev.off()
 
 ################################################################################
-# Sample level (non-longitudinal patient)
+# Sample level (non-longitudinal patients) alluvial
 ################################################################################
 samples_to_use <- ctcs@colData %>% 
   as.data.frame() %>% 
@@ -182,7 +170,6 @@ non_long_patients <- ctcs@colData %>%
   pull(patient_id) %>% 
   as.character() 
 
-
 patient_level_subtype <- ctcs@colData %>% 
   as.data.frame() %>% 
   filter(patient_id %in% non_long_patients & collection_id %in% samples_to_use) %>% 
@@ -193,12 +180,9 @@ patient_level_subtype <- ctcs@colData %>%
   select(collection_id,subtype) %>% 
   distinct()
 
-
 tied_patients <- patient_level_subtype %>% 
   count(collection_id) %>% 
   filter(n > 1)
-
-
 
 plot_df <- ctcs@colData %>% 
   as.data.frame() %>% 
@@ -218,7 +202,6 @@ plot_df$treatment_status <- ifelse(plot_df$treatment_status == "Naive", plot_df$
 plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","SOC","Pre-Tarla","Tarla"))
 
 plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
-
 
 
 plot_df_long <- to_lodes_form(data.frame(plot_df),
@@ -250,7 +233,6 @@ p3 <- ggplot(data = plot_df_long,
   theme_void() +
   rremove("legend")
 
-p3
 
 tiff("figures/patient_level_alluvial_plot.tiff", width=500,height=300, units = "mm", res=600)
 print(p3)
