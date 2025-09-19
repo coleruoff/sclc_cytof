@@ -1,24 +1,24 @@
+################################################################################
+# This script tests the subtype association with multiple variables and plots 
+# the results as log odds ratio forest plots
+################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 
-# cluster_colors <- c("#dd4b33", "#F1FAEE", "#A8DADC", "#457B9D")
 cluster_colors <- c("#dd4b33", "#D1DACF", "#A8DADC", "#457B9D")
 ################################################################################
+#Read in data
+################################################################################
 ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
-################################################################################
-
-sce <- ctcs
 
 ################################################################################
-# Sex
+# Sex Association
 ################################################################################
-data_df <- sce@colData %>% 
+data_df <- ctcs@colData %>% 
   as.data.frame() %>% 
   select(subtype,sex,patient_id) %>% 
   filter(!is.na(sex))
-
 
 results_list <- list()
 for(curr_subtype in c("A","N","P","I")){
@@ -31,13 +31,10 @@ for(curr_subtype in c("A","N","P","I")){
     family = binomial(link = "logit"),
     data = data_df)
   
-  # summary(model)
-  
   or <- exp(fixef(model)[2])
   
   tidy_out <- broom.mixed::tidy(model,effects='fixed')
   curr_pval <- tidy_out$p.value[2]
-  
   
   lower_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][1])
   upper_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][2])
@@ -50,7 +47,6 @@ for(curr_subtype in c("A","N","P","I")){
 
 # Combine into one data frame
 all_results <- bind_rows(results_list)
-
 
 plot_df <- all_results %>% 
   mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
@@ -77,49 +73,33 @@ p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
         axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 0, hjust = .5))
 
-
-p1
-
-
 tiff("figures/subtype_sex_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p1)
 dev.off()
-
-
 ################################################################################
-# Age
+# Age Association
 ################################################################################
-data_df <- sce@colData %>% 
+data_df <- ctcs@colData %>% 
   as.data.frame() %>% 
   select(subtype,age,patient_id) %>% 
   filter(!is.na(age)) %>% 
   mutate(age = as.numeric(as.character(age)))
-
 
 results_list <- list()
 for(curr_subtype in c("A","N","P","I")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
-  # formula_str <- glue("curr_subtype ~ {group}")
   
   model <- glmer(
     formula = as.formula(formula_str),
     family = binomial(link = "logit"),
     data = data_df)
   
-  # model <- glm(
-  #   formula = as.formula(formula_str),
-  #   family = binomial(link = "logit"),
-  #   data = data_df)
-  
-  summary(model)
-  
   or <- exp(fixef(model)[2])
   
   tidy_out <- tidy(model,effects='fixed')
   curr_pval <- tidy_out$p.value[2]
-  
   
   lower_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][1])
   upper_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][2])
@@ -133,14 +113,13 @@ for(curr_subtype in c("A","N","P","I")){
 # Combine into one data frame
 all_results <- bind_rows(results_list)
 
-
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
+  mutate(padj = p.adjust(pval)) %>% 
+  mutate(signif = ifelse(padj < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
-
 
 plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
 
@@ -160,48 +139,35 @@ p2 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
         axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 0, hjust = .5))
 
-
-
-p2
 tiff("figures/subtype_age_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p2)
 dev.off()
 
-
 ################################################################################
-# Treatment Status
+# Treatment Status Association
 ################################################################################
-data_df <- sce@colData %>% 
+data_df <- ctcs@colData %>% 
   as.data.frame() %>% 
   select(subtype,treatment_status,patient_id) %>% 
   filter(!is.na(treatment_status))
 
 data_df$treatment_status <- factor(data_df$treatment_status, levels = c("naive","treated"))
 
-
-data_df$treatment_status
-
 results_list <- list()
 for(curr_subtype in c("A","N","P","I")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
-  # formula_str <- glue("curr_subtype ~ {group}")
 
   model <- glmer(
     formula = as.formula(formula_str),
     family = binomial(link = "logit"),
     data = data_df)
   
-
-  
-  summary(model)
-  
   or <- exp(fixef(model)[2])
   
   tidy_out <- tidy(model,effects='fixed')
   curr_pval <- tidy_out$p.value[2]
-  
   
   lower_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][1])
   upper_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][2])
@@ -215,17 +181,15 @@ for(curr_subtype in c("A","N","P","I")){
 # Combine into one data frame
 all_results <- bind_rows(results_list)
 
-
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
+  mutate(padj = p.adjust(pval)) %>% 
+  mutate(signif = ifelse(padj < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
-
 plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
-
 
 p3 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   geom_point(aes(shape = factor(signif)),size=12,fill="white",show.legend = F, stroke=3)+
@@ -241,51 +205,38 @@ p3 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   annotate("text", x=.85, y=4.5, label = "SOC", angle=0,size=6) +
   theme(axis.text = element_text(size=22,angle = 0, hjust = 1),
         axis.title = element_text(size=24),
-        ,
         axis.text.x = element_text(angle = 0, hjust = .5))
 
-p3
 
 tiff("figures/subtype_treatment_status_or_results.tiff", width=100,height=200, units = "mm", res=600)
 print(p3)
 dev.off()
 
 ################################################################################
-# Tarla Status
+# Tarla Status Association
 ################################################################################
-data_df <- sce@colData %>% 
+data_df <- ctcs@colData %>% 
   as.data.frame() %>% 
   select(subtype,tarla,patient_id) %>% 
   filter(!is.na(tarla))
 
 data_df$tarla <- factor(data_df$tarla, levels = c("pre","post"))
 
-
-
 results_list <- list()
 for(curr_subtype in c("A","N","P","I")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
-  # formula_str <- glue("curr_subtype ~ {group}")
   
   model <- glmer(
     formula = as.formula(formula_str),
     family = binomial(link = "logit"),
     data = data_df)
   
-  # model <- glm(
-  #   formula = as.formula(formula_str),
-  #   family = binomial(link = "logit"),
-  #   data = data_df)
-  
-  summary(model)
-  
   or <- exp(fixef(model)[2])
   
   tidy_out <- tidy(model,effects='fixed')
   curr_pval <- tidy_out$p.value[2]
-  
   
   lower_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][1])
   upper_or <- exp(confint(model, parm = "beta_", method = "Wald")[2,][2])
@@ -299,15 +250,13 @@ for(curr_subtype in c("A","N","P","I")){
 # Combine into one data frame
 all_results <- bind_rows(results_list)
 
-
 plot_df <- all_results %>% 
-  mutate(signif = ifelse(pval < 0.05, "s","ns")) %>% 
+  mutate(padj = p.adjust(pval)) %>% 
+  mutate(signif = ifelse(padj < 0.05, "s","ns")) %>% 
   mutate(log_or = log(or)) %>% 
   mutate(log_upper_or = log(up_or)) %>% 
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
-
-
 
 plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
 
@@ -328,9 +277,6 @@ p4 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
         axis.text.x = element_text(angle = 0, hjust = .5)) 
   
   
- 
-
-p4
 tiff("figures/subtype_tarla_or_results.tiff", width=100, height=200, units = "mm", res=600)
 print(p4)
 dev.off()

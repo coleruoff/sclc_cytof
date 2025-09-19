@@ -1,7 +1,7 @@
 ################################################################################
 # Process and QC
 ################################################################################
-# source("source/final_scripts/process_samples.R") 
+# source("source/final_scripts/process_samples.R")
 # source("source/final_scripts/cytof_samples_qc.R")
 
 ################################################################################
@@ -34,13 +34,13 @@
 # source("source/final_scripts/subtype_expression_heatmap.R")
 # source("source/final_scripts/subtype_expression_boxplots.R")
 
-source("source/final_scripts/non_ctc_subtype_detection_heatmap.R")
-source("source/final_scripts/non_ctc_subtype_expression_heatmap.R")
+# source("source/final_scripts/non_ctc_subtype_detection_heatmap.R")
+# source("source/final_scripts/non_ctc_subtype_expression_heatmap.R")
 source("source/final_scripts/non_ctc_subtype_expression_boxplots.R")
 
-source("source/final_scripts/normal_subtype_detection_heatmap.R")
-source("source/final_scripts/normal_subtype_expression_heatmap.R")
-source("source/final_scripts/normal_subtype_expression_boxplots.R")
+# source("source/final_scripts/normal_subtype_detection_heatmap.R")
+# source("source/final_scripts/normal_subtype_expression_heatmap.R")
+# source("source/final_scripts/normal_subtype_expression_boxplots.R")
 
 source("source/final_scripts/binary_lmm_subtype_association.R")
 

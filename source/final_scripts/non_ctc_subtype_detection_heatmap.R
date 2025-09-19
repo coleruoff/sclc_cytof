@@ -1,9 +1,9 @@
-
+################################################################################
+# This script runs the subtype detection approach on non-CTCs as a control
 ################################################################################
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
 # Read in CyTOF data with cluster assignments
 ################################################################################
@@ -92,14 +92,14 @@ all_samples_ht <- draw(ht)
 p1 <- fviz_nbclust(t(all_samples_heatmap), kmeans, method='silhouette')+
   ggtitle("Optimal Number of Subclusters (Non-CTCs)")
 
-# jpeg("figures/all_samples_non_ctcs_optimal_clusters.jpg", width = 200, height = 100, units = "mm", res = 1200)
-# print(p1)
-# dev.off()
+tiff("figures/all_samples_non_ctcs_optimal_clusters.tiff", width = 200, height = 100, units = "mm", res = 1200)
+print(p1)
+dev.off()
 
  #############################################################################
 # ALL SAMPLES
 #############################################################################
-jpeg("figures/all_samples_non_ctcs_subtype_heatmap.jpg", width=300,height=120, units = "mm", res=1000)
+tiff("figures/all_samples_non_ctcs_subtype_heatmap.tiff", width=300,height=120, units = "mm", res=1000)
 print(all_samples_ht)
 dev.off()
 #############################################################################
