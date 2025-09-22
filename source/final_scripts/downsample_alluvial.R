@@ -17,6 +17,7 @@ cluster_colors <- c("#dd4b33", "#D1DACF", "#A8DADC", "#457B9D")
 ################################################################################
 n_cells <- 20
 for(n_cells in c(20,50)){
+  
   sampled_data <- ctcs@colData %>% 
     as.data.frame() %>%
     group_by(patient_id) %>%

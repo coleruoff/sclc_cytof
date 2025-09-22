@@ -66,14 +66,14 @@ p3 <- p3+
 ################################################################################
 # Save figures
 ################################################################################
-jpeg(glue("figures/all_samples_cluster_tf_expression_boxplot.jpg"), width=160,height=160, units = "mm", res=1000)
+tiff(glue("figures/all_samples_cluster_tf_expression_boxplot.tiff"), width=160,height=160, units = "mm", res=1000)
 print(p1)
 dev.off()
 
-jpeg(glue("figures/all_samples_ce_vs_nonce_tf_expression_boxplot.jpg"), width=160,height=160, units = "mm", res=1000)
+tiff(glue("figures/all_samples_ce_vs_nonce_tf_expression_boxplot.tiff"), width=160,height=160, units = "mm", res=1000)
 print(p2)
 dev.off()
 
-jpeg(glue("figures/all_samples_cluster_expression_boxplot.jpg"), width=320,height=200, units = "mm", res=1000)
+tiff(glue("figures/all_samples_cluster_expression_boxplot.tiff"), width=320,height=200, units = "mm", res=1000)
 print(p3)
 dev.off()

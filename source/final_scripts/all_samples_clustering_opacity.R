@@ -54,7 +54,7 @@ p2 <- ggplot(df)+
         legend.text = element_text(size=10),
         legend.title = element_text(size=12))   
 
-jpeg("figures/all_samples_cluster_opacity.jpg", width=120,height=100, units = "mm", res=1000)
+tiff("figures/all_samples_cluster_opacity.tiff", width=120,height=100, units = "mm", res=1000)
 print(p1)
 dev.off()
 

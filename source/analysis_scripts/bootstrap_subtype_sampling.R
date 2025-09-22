@@ -1,18 +1,32 @@
 source("source/sclc_cytof_functions.R")
 
-script_seed <- 42
-set.seed(script_seed)
+set.seed(42)
 ################################################################################
 # Calculate mean subtype proportions
 ################################################################################
+n_cells <- 20
+
 # Repeat 100 times
+resamples <- map(1:1000, ~ {
+  ctcs@colData %>%
+    as.data.frame() %>% 
+    group_by(patient_id) %>%
+    filter(n() >= n_cells) %>%
+    slice_sample(n = n_cells) %>%
+    count(subtype) %>%                   # count subtypes across ALL patients
+    mutate(prop = n / sum(n), 
+           iteration = .x) %>% 
+    ungroup()
+})
+
+# Repeat 1000 times
 resamples <- map(1:1000, ~ {
   ctcs@colData %>%
     as.data.frame() %>% 
     group_by(patient_id) %>%
     filter(n() >= 10) %>%
     slice_sample(n = 10) %>%
-    count(subtype) %>%                   # count subtypes across ALL patients
+    count(subtype,treatment_status) %>%                   # count subtypes across ALL patients
     mutate(prop = n / sum(n), 
            iteration = .x) %>% 
     ungroup()
@@ -21,9 +35,15 @@ resamples <- map(1:1000, ~ {
 # Combine
 df_resampled <- bind_rows(resamples)
 
+
+
+ggviolin(df_resampled, x="subtype",y="prop",fill="treatment_status",draw_quantiles = 0.5)+
+  stat_compare_means(aes(group = treatment_status))
+
+
 # Global consensus with variability
 global_consensus <- df_resampled %>%
-  group_by(subtype) %>%
+  group_by(subtype,treatment_status) %>%
   summarise(
     mean_prop = mean(prop),
     sd_prop   = sd(prop),

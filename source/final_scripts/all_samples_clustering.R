@@ -112,14 +112,14 @@ p2 <- ggplot(df)+
 ################################################################################
 # Save figures
 ################################################################################
-jpeg("figures/all_samples_cluster.jpg", width=120,height=100, units = "mm", res=1000)
+tiff("figures/all_samples_cluster.tiff", width=120,height=100, units = "mm", res=1000)
 print(p1)
 dev.off()
 
-jpeg("figures/all_samples_normal_vs_cancer_cluster.jpg", width=180,height=100, units = "mm", res=1000)
+tiff("figures/all_samples_normal_vs_cancer_cluster.tiff", width=180,height=100, units = "mm", res=1000)
 print(p2)
 dev.off()
 
-jpeg("figures/all_samples_cluster_delta_plot.jpg", width=180,height=100, units = "mm", res=1000)
+tiff("figures/all_samples_cluster_delta_plot.tiff", width=180,height=100, units = "mm", res=1000)
 print(delta_plot)
 dev.off()
