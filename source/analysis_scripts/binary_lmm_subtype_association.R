@@ -158,7 +158,7 @@ data_df %>%
 
 data_df %>% 
   count(patient_id,treatment_status) %>% 
-  count(treatment_status)
+  count(treatment_status) 
 
 data_df$treatment_status <- factor(data_df$treatment_status, levels = c("naive","treated"))
 
@@ -210,16 +210,18 @@ p3 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-.85, y=4.5, label = "Naive", angle=0,size=6) +
-  annotate("text", x=.85, y=4.5, label = "SOC", angle=0,size=6) +
+  annotate("text", x=-.85, y=4.5, label = "Naive", angle=0,size=8) +
+  annotate("text", x=.85, y=4.5, label = "SOC", angle=0,size=8) +
   theme(axis.text = element_text(size=22,angle = 0, hjust = 1),
         axis.title = element_text(size=24),
         axis.text.x = element_text(angle = 0, hjust = .5))
 
 
-tiff("figures/subtype_treatment_status_or_results.tiff", width=100,height=200, units = "mm", res=600)
+tiff("figures/subtype_treatment_status_or_results.tiff", width=120,height=200, units = "mm", res=600)
 print(p3)
 dev.off()
+
+sprintf("%.4f", plot_df$padj)
 
 ################################################################################
 # Tarla Status Association
@@ -287,16 +289,16 @@ p4 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   labs(y="Subtype",
        x="log(OR)")+
   theme_classic()+
-  annotate("text", x=-.75, y=4.5, label = "Pre-Tarlatamab", angle=0,size=4) +
-  annotate("text", x=.75, y=4.5, label = "Post-Tarlatamab", angle=0,size=4) +
+  annotate("text", x=-.75, y=4.4, label = "Pre\nTarlatamab", angle=0,size=7.5) +
+  annotate("text", x=.75, y=4.4, label = "Post\nTarlatamab", angle=0,size=7.5) +
   theme(axis.text = element_text(size=22,angle = 0, hjust = 1),
         axis.title = element_text(size=24),
         axis.text.x = element_text(angle = 0, hjust = .5)) 
   
   
-tiff("figures/subtype_tarla_or_results.tiff", width=100, height=200, units = "mm", res=600)
+tiff("figures/subtype_tarla_or_results.tiff", width=120, height=200, units = "mm", res=600)
 print(p4)
 dev.off()
 
-
+sprintf("%.4f", plot_df$padj)
 

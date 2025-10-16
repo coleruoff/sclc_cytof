@@ -13,7 +13,8 @@ ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
 ################################################################################
 # Create plot dataframe
 ################################################################################
-markers_to_use <- c("ASCL1", "NeuroD1", "POU2F3", "DLL3", "Alcam","SLUG", "PD-L1", "p-YAP", "CD44", "CD24","E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist")
+# markers_to_use <- c("ASCL1", "NeuroD1", "POU2F3", "DLL3", "Alcam","SLUG", "PD-L1", "p-YAP", "CD44", "CD24","E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist")
+markers_to_use <- c("DLL3","SLUG", "PD-L1", "p-YAP", "CD44", "CD24","E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist","Alcam")
 
 y <- assay(ctcs, "exprs")
 
@@ -29,13 +30,19 @@ plot_df <- gg_df %>%
 
 plot_df$antigen <- factor(plot_df$antigen, levels = markers_to_use)
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive", "SOC")
 
-plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive", "SOC"))
+plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
+
+plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
+                                    ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
+
+# plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive", "SOC")
+
+plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive", "SOC","Tarla"))
 
 # Remove post-tarla samples
-plot_df <- plot_df %>%
-  filter(tarla != "post" | is.na(tarla))
+# plot_df <- plot_df %>%
+#   filter(tarla != "post" | is.na(tarla))
 
 ################################################################################
 # Plot violin plots
@@ -49,11 +56,11 @@ stat.test
 
 
 p <- ggviolin(plot_df, x="treatment_status" ,y="expression", fill="treatment_status", lwd=.3, outlier.size = .1,draw_quantiles =0.5)+
-  facet_wrap(~antigen,nrow=3)+
-  ylim(0,9)+
+  facet_wrap(~antigen,nrow=2)+
+  ylim(0,NA)+
   labs(y="Expression",
        x= "")+
-  scale_fill_manual(name = "Subtype",values=c("#E63946","#457B9D"))+
+  scale_fill_manual(name = "Subtype",values=c("#E63946","#457B9D","#A8DADC"))+
   theme(axis.title = element_text(size=20),
         axis.text.x = element_text(size=16,angle=45,hjust=1,vjust=1),
         strip.text = element_text(face = "bold", size=16), 

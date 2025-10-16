@@ -48,7 +48,7 @@ source("source/final_scripts/normal_subtype_detection_heatmap.R")
 source("source/final_scripts/normal_subtype_expression_heatmap.R")
 source("source/final_scripts/normal_subtype_expression_boxplots.R")
 
-source("source/final_scripts/binary_lmm_subtype_association.R")
+source("source/final_scripts/all_cells_subtype_treatment_status_three_comparison.R")
 
 ################################################################################
 # Treatment status analysis 
@@ -58,14 +58,14 @@ source("source/final_scripts/treatment_status_expr_heatmap.R")
 source("source/final_scripts/treatment_status_subtype_barplots.R")
 
 ################################################################################
-#Tarla analysis
+# Tarla analysis
 ################################################################################
 source("source/final_scripts/pre_post_tarla_expr_boxplots.R")
 source("source/final_scripts/pre_post_tarla_expr_heatmap.R")
 source("source/final_scripts/pre_post_tarla_subtype_barplots.R")
 
 ################################################################################
-#Longitudinal analysis
+# Longitudinal analysis
 ################################################################################
 source("source/final_scripts/longitudinal_subtype_barplots.R")
 source("source/final_scripts/longitudinal_expression_heatmap.R")
@@ -76,7 +76,14 @@ source("source/final_scripts/ctc_subtype_treatment_proportion_barplot.R")
 # Alluvial Plots
 ################################################################################
 source("source/final_scripts/subtype_treatment_alluvial.R")
-source("source/final_scripts/downsample_alluvial.R")
+# source("source/final_scripts/downsample_subtype_associations.R")
+
+################################################################################
+# Downsampling analysis
+################################################################################
+source("source/final_scripts/bootstrap_subtype_sampling.R")
+source("source/final_scripts/downsampled_subtype_treatment_status_three_comparison.R")
+source("source/final_scripts/downsampled_samples_subtype_barplots.R")
 
 ################################################################################
 # Xenograft samples plots

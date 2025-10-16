@@ -15,7 +15,9 @@ cluster_colors <- c("#dd4b33", "#D1DACF", "#A8DADC", "#457B9D")
 ################################################################################
 # # Sample n cells from each patient
 ################################################################################
-n_cells <- 20
+n_cells <- 50
+
+all_pvals <- list()
 for(n_cells in c(20,50)){
   
   sampled_data <- ctcs@colData %>% 
@@ -26,6 +28,8 @@ for(n_cells in c(20,50)){
     ungroup()
   
   cat(length(unique(sampled_data$patient_id)), " patients\n")
+  
+  
   
   ################################################################################
   # Create plot dataframe
@@ -43,6 +47,14 @@ for(n_cells in c(20,50)){
   plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","SOC","Pre-Tarla","Tarla"))
   
   plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
+  
+  plot_df %>% 
+    count(subtype, treatment_status) %>% 
+    group_by(treatment_status) %>% 
+    mutate(total = sum(n)) %>% 
+    mutate(freq = (n/total)*100) %>% 
+    arrange(treatment_status) %>% 
+    select(treatment_status,freq,subtype)
   
   plot_df_long <- to_lodes_form(data.frame(plot_df),
                                 key = "category", value = "group", id = "cohort",
@@ -129,11 +141,13 @@ for(n_cells in c(20,50)){
     labs(y="Subtype",
          x="log(OR)")+
     theme_classic()+
-    annotate("text", x=-.85, y=4.5, label = "Naive", angle=0,size=6) +
-    annotate("text", x=.85, y=4.5, label = "SOC", angle=0,size=6) +
+    annotate("text", x=-.85, y=4.5, label = "Naive", angle=0,size=8) +
+    annotate("text", x=.85, y=4.5, label = "SOC", angle=0,size=8) +
     theme(axis.text = element_text(size=22,angle = 0, hjust = 1),
           axis.title = element_text(size=24),
           axis.text.x = element_text(angle = 0, hjust = .5))
+  
+  all_pvals <- append(all_pvals, list(sprintf("%.4f",plot_df$padj)))
   
   ################################################################################
   # Tarla Status Association
@@ -190,11 +204,13 @@ for(n_cells in c(20,50)){
     labs(y="Subtype",
          x="log(OR)")+
     theme_classic()+
-    annotate("text", x=-.75, y=4.5, label = "Pre-Tarlatamab", angle=0,size=4) +
-    annotate("text", x=.75, y=4.5, label = "Post-Tarlatamab", angle=0,size=4) +
+    annotate("text", x=-1.25, y=4.4, label = "Pre\nTarlatamab", angle=0,size=7.5) +
+    annotate("text", x=1.25, y=4.4, label = "Post\nTarlatamab", angle=0,size=7.5) +
     theme(axis.text = element_text(size=22,angle = 0, hjust = 1),
           axis.title = element_text(size=24),
           axis.text.x = element_text(angle = 0, hjust = .5)) 
+  
+  all_pvals <- append(all_pvals, list(sprintf("%.4f",plot_df$padj)))
   
   ################################################################################
   # Save figures
@@ -204,18 +220,21 @@ for(n_cells in c(20,50)){
   print(p1)
   dev.off()
   
-  tiff(glue("figures/downsampled_subtype_treatment_status_or_results_{n_cells}.tiff"), width=200,height=200, units = "mm", res=600)
+  tiff(glue("figures/downsampled_subtype_treatment_status_or_results_{n_cells}.tiff"), width=120,height=200, units = "mm", res=600)
   print(p3)
   dev.off()
   
-  tiff(glue("figures/downsampled_subtype_tarla_or_results_{n_cells}.tiff"), width=200, height=200, units = "mm", res=600)
+  tiff(glue("figures/downsampled_subtype_tarla_or_results_{n_cells}.tiff"), width=120, height=200, units = "mm", res=600)
   print(p4)
   dev.off()
 }
 
 
 
+all_pvals <- do.call(rbind,all_pvals)
 
+colnames(all_pvals) <- c("A","N","P","I")
 
+rownames(all_pvals) <- c("20_treatment","20_tarla","50_treatment","50_tarla")
 
-
+all_pvals

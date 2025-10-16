@@ -23,19 +23,23 @@ plot_df <- ctcs@colData %>%
   cbind(1) %>% 
   rename("n" = "1")
 
-
 plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
-plot_df$tarla <- ifelse(plot_df$tarla == "pre","Pre-Tarla","Tarla")
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "Naive", plot_df$treatment_status, ifelse(plot_df$tarla == "Pre-Tarla" | is.na(plot_df$tarla),plot_df$treatment_status,"Tarla"))
-
-plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","SOC","Pre-Tarla","Tarla"))
+plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
+                                        ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
 
 plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
 
 # Count cells
 plot_df %>% 
   count(treatment_status)
+
+plot_df %>% 
+  count(treatment_status,subtype) %>% 
+  group_by(treatment_status) %>% 
+  mutate(total = sum(n)) %>% 
+  mutate(freq = (n/total)*100) %>% 
+  select(treatment_status,subtype,freq)
 
 plot_df_long <- to_lodes_form(data.frame(plot_df),
                               key = "category", value = "group", id = "cohort",
@@ -92,25 +96,22 @@ sample_level_subtype <- ctcs@colData %>%
   select(collection_id,subtype) 
 
 
-
 plot_df <- ctcs@colData %>% 
   as.data.frame() %>% 
   filter(collection_id %in% samples_to_use) %>% 
-  select(collection_id,treatment_status,tarla) %>%
+  select(collection_id,treatment_status,tarla,patient_id) %>%
   distinct() %>% 
   merge(.,sample_level_subtype,by="collection_id") %>% 
-  select(treatment_status.x,subtype,tarla) %>% 
+  select(treatment_status.x,subtype,tarla,patient_id) %>% 
   rename("treatment_status" = "treatment_status.x") %>% 
   cbind(1) %>% 
   rename("n" = "1") 
 
 
 plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
-plot_df$tarla <- ifelse(plot_df$tarla == "pre","Pre-Tarla","Tarla")
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "Naive", plot_df$treatment_status, ifelse(plot_df$tarla == "Pre-Tarla" | is.na(plot_df$tarla),plot_df$treatment_status,"Tarla"))
-
-plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","SOC","Pre-Tarla","Tarla"))
+plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
+                                   ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
 
 plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
 
@@ -158,6 +159,7 @@ dev.off()
 ################################################################################
 # Sample level (non-longitudinal patients) alluvial
 ################################################################################
+# Find patient level subtypes
 samples_to_use <- ctcs@colData %>% 
   as.data.frame() %>% 
   count(collection_id) %>% 
@@ -223,11 +225,9 @@ plot_df <- ctcs@colData %>%
 
 
 plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
-plot_df$tarla <- ifelse(plot_df$tarla == "pre","Pre-Tarla","Tarla")
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "Naive", plot_df$treatment_status, ifelse(plot_df$tarla == "Pre-Tarla" | is.na(plot_df$tarla),plot_df$treatment_status,"Tarla"))
-
-plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","SOC","Pre-Tarla","Tarla"))
+plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
+                                   ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
 
 plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
 
@@ -248,8 +248,6 @@ plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
 
 p3 <- ggplot(data = plot_df_long,
              aes(x = category, stratum = group, alluvium = cohort, y = total)) +
-  coord_flip() +
-  scale_y_reverse() +
   geom_flow(aes(fill=group),width=.3, aes.flow = "backward") +
   geom_stratum(aes(fill=group),width=.3) +
   geom_text(stat = "stratum", aes(label = glue("{group}")),size=15) +
@@ -261,8 +259,8 @@ p3 <- ggplot(data = plot_df_long,
   theme_void() +
   rremove("legend")
 
-
-tiff("figures/patient_level_alluvial_plot.tiff", width=500,height=300, units = "mm", res=600)
+p3
+tiff("figures/patient_level_alluvial_plot.tiff", width=300,height=500, units = "mm", res=600)
 print(p3)
 dev.off()
 

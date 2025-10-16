@@ -79,10 +79,14 @@ plot_df$new_sample_id <- factor(plot_df$new_sample_id)
 plot_df <- plot_df %>% 
   filter(plot_df$patient_id %in% long_patients)
 
+plot_df$patient_id <- factor(plot_df$patient_id, 
+                             levels=c("SC392", "SC430", "SC293", "SC338", "SC399","SC500","SC454","SC501","SC547"))
+
+
 p <- ggplot(plot_df)+
   geom_col(aes(x=new_sample_id,y=freq,fill=subtype))+
   geom_text(aes(label=total,x=new_sample_id), y=105,size = 3)+
-  facet_wrap(~patient_id, scales="free",ncol=5)+
+  facet_wrap(~patient_id, scales="free",ncol=6)+
   ylim(0,105)+
   scale_fill_manual(name = "Subtype",values=cluster_colors)+
   labs(x="Sample Number",
@@ -102,7 +106,7 @@ p
 ################################################################################
 # Save figure
 ################################################################################
-tiff("figures/all_patients_longitudinal_subtype_barplots.tiff", width=225,height=150, units = "mm", res=600)
+tiff("figures/all_patients_longitudinal_subtype_barplots.tiff", width=250,height=150, units = "mm", res=600)
 print(p)
 dev.off()
 
