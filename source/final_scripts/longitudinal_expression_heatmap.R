@@ -60,6 +60,9 @@ assay(long_data, "exprs") <- t(scale(t(assay(long_data, "exprs"))))
 # Create heatmap for each patient
 ################################################################################
 heatmap_list <- list()
+
+long_patients <- c("MDA-SC392","MDA-SC430","MDA-SC293","MDA-SC338","MDA-SC399","MDA-SC500","MDA-SC454","MDA-SC501","MDA-SC547","MDA-SC254")
+
 for(curr_patient in long_patients){
   
   curr_sample_ids <- long_data %>%
@@ -106,31 +109,31 @@ legend_obj <- color_mapping_legend(dummy_ht@ht_list[[1]]@matrix_color_mapping, p
 # Save figure
 ################################################################################
 
-tiff(glue("figures/longitudinal_expression_heatmap.tiff"), width=260,height=150, units = "mm", res=600)
+tiff(glue("figures/longitudinal_expression_heatmap.tiff"), width=260,height=275, units = "mm", res=600)
 
 # Now draw the heatmaps without legend in a 2x4 grid
 grid.newpage()
-pushViewport(viewport(layout = grid.layout(2, 5, widths = unit.c(unit(rep(1, 5), "null"), unit(.5, "cm")))))
-
+pushViewport(viewport(layout = grid.layout(4, 4, widths = unit.c(unit(rep(1, 4), "null"), unit(.5, "cm")))))
 
 for (i in seq_along(heatmap_list)) {
-  row <- ceiling(i / 4.5)
-  col <- (i - 1) %% 4.5 + 1
+  row <- ceiling(i / 4)
+  col <- (i - 1) %% 4 + 1
   vp <- viewport(layout.pos.row = row, layout.pos.col = col)
   pushViewport(vp)
-  
   
   
   draw(heatmap_list[[i]], newpage = FALSE, 
        show_heatmap_legend = FALSE, 
        show_annotation_legend = FALSE)
+  
   upViewport()
 }
 
 # Add the legend on the right side of the page
-pushViewport(viewport(x = 0.95, y = 0, width = 1, height = 1, just = c("right", "center"), layout.pos.col = 5, layout.pos.row = 1))
+pushViewport(viewport(x = 0.95, y = 0, width = 1, height = 1, just = c("right", "center"), layout.pos.col = 4, layout.pos.row = 4))
 grid.draw(legend_obj)
 upViewport()
 
 
 dev.off()
+

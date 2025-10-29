@@ -41,7 +41,9 @@ all_data <- all_data %>%
 # Read in ctc data
 ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
 
-ctcs_count <- ctcs %>% 
+levels(ctcs$patient_id)
+
+ ctcs_count <- ctcs %>% 
   colData() %>% 
   as.data.frame() %>% 
   count(sample_id)
@@ -60,6 +62,9 @@ ctc_table <- all_data %>%
 ctc_table$percent_ctc <- as.numeric(ctc_table$percent_ctc)
 
 summary(ctc_table$percent_ctc)
+
+ctc_table$sample_id <- sapply(ctc_table$sample_id, function(x) strsplit(x, "_")[[1]][1]) 
+ctc_table$sample_id <- paste0("MDA-",ctc_table$sample_id)
 
 write.csv(ctc_table,file = "data/ctc_percent_table.csv",row.names = F)
 

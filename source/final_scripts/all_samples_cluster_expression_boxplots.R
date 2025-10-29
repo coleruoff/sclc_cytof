@@ -19,9 +19,11 @@ sce$cancer_enriched <- ifelse(sce$new_clusters %in% cancer_enriched_clusters, "c
 
 markers_to_use <- c("NeuroD1","ASCL1","POU2F3","p-Rb")
 
-p1 <- create_marker_boxplots(sce, markers_to_use, "new_clusters","cancer_enriched")
+p1 <- create_marker_boxplots(sce, markers_to_use, group="new_clusters",fill="cancer_enriched")
 
-p1 <- p1+
+
+p1
+p1 <- p1 +
   labs(y="Expression",
        x="",
        fill="")+

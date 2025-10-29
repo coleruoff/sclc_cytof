@@ -8,14 +8,14 @@ set.seed(42)
 ################################################################################
 # Read in data
 ################################################################################
-ctcs <- readRDS("data/cytof_objects/normals_with_subtype.rds")
+ctcs <- readRDS("data/cytof_objects/normal_with_subtype.rds")
 
 
 ################################################################################
 ##Create heatmap
 ################################################################################
 markers_to_use <- c("ASCL1", "NeuroD1", "POU2F3", "DLL3", "Alcam", "E-Cad", "EpCAM", "MUC-1", "Vimentin", "Twist", "SLUG", "PD-L1", "p-YAP", "CD44", "CD24")
-
+ctcs$subtype
 ht <- create_expression_heatmap(ctcs, "subtype", markers_to_use,"",scale = T)
 
 col_fun = colorRamp2(c(-3, -1, 0, 1, 3), 

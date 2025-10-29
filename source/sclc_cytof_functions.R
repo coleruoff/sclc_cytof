@@ -127,7 +127,7 @@ create_expression_heatmap <- function(sce, group, markers, curr_title="", scale=
   all_groups <- sort(unique(sce[[group]]))
   
   if(group == "subtype"){
-    all_groups <- c("A","N","P","I")
+    all_groups <- c("A","N","P","M")
   }
   
   
@@ -179,7 +179,7 @@ create_marker_boxplots <- function(sce, markers_to_use, group, fill = NULL, alph
   ################################################################################
   
   if(group == "subtype"){
-    gg_df$subtype <- factor(gg_df$subtype, levels=c("A","N","P",'I'))
+    gg_df$subtype <- factor(gg_df$subtype, levels=c("A","N","P",'M'))
   }
   
   plot_df <- gg_df %>%
@@ -189,8 +189,10 @@ create_marker_boxplots <- function(sce, markers_to_use, group, fill = NULL, alph
   
   if(is.null(fill)){
     p <- ggboxplot(plot_df, x=group ,y="expression", fill=group, outlier.size = .1)
+    # p <- ggviolin(plot_df, x=group ,y="expression", fill=group, outlier.size = .1)
   } else{
     p <- ggboxplot(plot_df, x=group ,y="expression", fill=fill, outlier.size = .1)
+    # p <- ggviolin(plot_df, x=group ,y="expression", fill=group, outlier.size = .1)
   }
   
   if(group == "cancer_enriched"){

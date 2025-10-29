@@ -42,14 +42,16 @@ sample_order <- plot_df %>%
   pull(collection_id)
 
 
-plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","M"))
 
 
 p1 <- ggplot(plot_df)+
   geom_col(aes(x=collection_id,y=freq,fill=subtype))+
   geom_text(aes(label=total,x=collection_id,y=103),size=3)+
   # facet_wrap(~treatment_status,scales="free")+
-  facet_grid(. ~ treatment_status, scales = "free", space = "free") +
+  facet_grid(. ~ treatment_status, scales = "free", space = "free",labeller = as_labeller(c("Naive"="Naive",
+                                                                                            "SOC"="CTX ± ICI",
+                                                                                            "Tarla"="Tarla"))) +
   scale_fill_manual(values = cluster_colors)+
   theme_classic()+
   labs(x="Sample",
@@ -93,14 +95,16 @@ sample_order <- plot_df %>%
   arrange(desc(freq)) %>% 
   pull(collection_id)
 
-plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","M"))
 
 
 p2 <- ggplot(plot_df)+
   geom_col(aes(x=collection_id,y=freq,fill=subtype))+
   geom_text(aes(label=total,x=collection_id,y=103),size=3)+
   # facet_wrap(~treatment_status,scales="free")+
-  facet_grid(. ~ treatment_status, scales = "free", space = "free") +
+  facet_grid(. ~ treatment_status, scales = "free", space = "free",labeller = as_labeller(c("Naive"="Naive",
+                                                                                            "SOC"="CTX ± ICI",
+                                                                                            "Tarla"="Tarla"))) +
   scale_fill_manual(values = cluster_colors)+
   theme_classic()+
   labs(x="Sample",
@@ -150,7 +154,7 @@ plot_df <-  sampled_data %>%
   group_by(patient_id)
 
 
-plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","M"))
 
 p3 <- ggplot(plot_df)+
   geom_col(aes(x=treatment_status,y=freq,fill=subtype))+

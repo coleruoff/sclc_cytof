@@ -23,7 +23,7 @@ col_fun = colorRamp2(c(-2, -1, 0, 1, 2),
                        "#a50026"))
 
 
-patients_to_use <- c("SC293","SC506","SC443")
+patients_to_use <- c("MDA-SC293","MDA-SC506","MDA-SC443")
 
 curr_data <- ctcs
 

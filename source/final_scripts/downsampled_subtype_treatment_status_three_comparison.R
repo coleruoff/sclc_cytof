@@ -20,7 +20,7 @@ sampled_data <- ctcs@colData %>%
   slice_sample(n = n_cells) %>%
   ungroup()
 
-sampled_data$treatment_status <- ifelse(sampled_data$treatment_status == "naive","Naive","SOC")
+sampled_data$treatment_status <- ifelse(sampled_data$treatment_status == "naive","Naive","CTX ± ICI")
 
 sampled_data$treatment_status <- ifelse(is.na(sampled_data$tarla), sampled_data$treatment_status,
                                         ifelse(sampled_data$tarla == "pre", sampled_data$treatment_status, "Tarla"))
@@ -45,7 +45,7 @@ for(i in 1:4){
   chi_result
   
   ################################################################################
-  # Chi-squared test: Naive vs SOC
+  # Chi-squared test: Naive vs CTX ± ICI
   tbl <- contin_table[,c(2,1)]
   chi_result <- chisq.test(tbl, correct = F)
   
@@ -63,7 +63,7 @@ for(i in 1:4){
   CI_lower <- exp(log(OR) - 1.96*SE_logOR)
   CI_upper <- exp(log(OR) + 1.96*SE_logOR)
   
-  results_list <- append(results_list, list(c(subtypes[i],"Naive_SOC",OR,CI_upper,CI_lower,chi_result$p.value)))
+  results_list <- append(results_list, list(c(subtypes[i],"Naive_CTX ± ICI",OR,CI_upper,CI_lower,chi_result$p.value)))
   
   ################################################################################
   # Chi-squared test: Naive vs Tarla
@@ -87,7 +87,7 @@ for(i in 1:4){
   results_list <- append(results_list, list(c(subtypes[i],"Naive_Tarla",OR,CI_upper,CI_lower,chi_result$p.value)))
   
   ################################################################################
-  # Chi-squared test: SOC vs Tarla
+  # Chi-squared test: CTX ± ICI vs Tarla
   tbl <- contin_table[,c(3,2)]
   chi_result <- chisq.test(tbl, correct = F)
   
@@ -106,7 +106,7 @@ for(i in 1:4){
   CI_upper <- exp(log(OR) + 1.96*SE_logOR)
   
   ################################################################################
-  results_list <- append(results_list, list(c(subtypes[i],"SOC_Tarla",OR,CI_upper,CI_lower,chi_result$p.value)))
+  results_list <- append(results_list, list(c(subtypes[i],"CTX ± ICI_Tarla",OR,CI_upper,CI_lower,chi_result$p.value)))
 
 }
 
@@ -129,8 +129,12 @@ plot_df <- plot_df %>%
 plot_df$left_label <- as.character(sapply(plot_df$comparison, function(x) strsplit(x,"_")[[1]][1]))
 plot_df$right_label <- as.character(sapply(plot_df$comparison, function(x) strsplit(x,"_")[[1]][2]))
 
-plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
-plot_df$comparison <- factor(plot_df$comparison, levels = c("Naive_SOC","Naive_Tarla","SOC_Tarla"))
+plot_df$left_label[plot_df$left_label=="CTX ± ICI"] <- "CTX ± ICI"
+plot_df$right_label[plot_df$right_label=="CTX ± ICI"] <- "CTX ± ICI"
+
+
+plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P","M"))
+plot_df$comparison <- factor(plot_df$comparison, levels = c("Naive_CTX ± ICI","Naive_Tarla","CTX ± ICI_Tarla"))
 ################################################################################
 
 p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+

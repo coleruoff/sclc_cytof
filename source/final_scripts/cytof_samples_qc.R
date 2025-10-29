@@ -32,6 +32,17 @@ saveRDS(state_markers, "data/state_markers.rds")
 sce <- sce[,sce$experiment_id != "531050"]
 
 ################################################################################
+# Fix SC245
+################################################################################
+
+unique(sce$collection_id)
+sce$patient_id[sce$patient_id == "SC245"] <- "SC254"
+
+sce$collection_id <- as.character(sce$collection_id)
+sce$collection_id[sce$collection_id == "SC245-3"] <- "SC254-3"
+sce$collection_id <- factor(sce$collection_id, levels = unique(sce$collection_id))
+
+################################################################################
 # Remove low viability samples
 ################################################################################
 low_viability_samples <- paste0("NORMAL", c(10,11,15,18))

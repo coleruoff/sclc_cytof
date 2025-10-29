@@ -1,4 +1,4 @@
-
+source("source/sclc_cytof_functions.R")
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
 
 sample_df <- list()

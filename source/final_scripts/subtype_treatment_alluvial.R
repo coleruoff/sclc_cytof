@@ -17,18 +17,21 @@ cluster_colors <- c("#dd4b33", "#D1DACF", "#A8DADC", "#457B9D")
 # Cell level alluvial
 ################################################################################
 
+ctcs <- ctcs[,ctcs$collection_id != "MDA-SC399-2"]
+
+
 plot_df <- ctcs@colData %>% 
   as.data.frame() %>% 
   select(treatment_status,subtype,tarla) %>% 
   cbind(1) %>% 
   rename("n" = "1")
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
+plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","CTX ± ICI")
 
 plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
                                         ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
 
-plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
+plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P","M"))
 
 # Count cells
 plot_df %>% 
@@ -51,8 +54,13 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
 
 
 
-plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
-plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
+plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","CTX ± ICI","Tarla"))
+plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","CTX ± ICI","Tarla"))
+
+
+plot_df_long$group <- factor(plot_df_long$group, levels=c("Naive","CTX ± ICI","Tarla", "A", "N", "P", "M"))
+plot_df_long_left$group <- factor(plot_df_long_left$group, levels=c("Naive","CTX ± ICI","Tarla", "A", "N", "P", "M"))
+plot_df_long_right$group <- factor(plot_df_long_right$group, levels=c("Naive","CTX ± ICI","Tarla", "A", "N", "P", "M"))
 
 p1 <- ggplot(data = plot_df_long,
              aes(x = category, stratum = group, alluvium = cohort, y = total)) +
@@ -108,12 +116,12 @@ plot_df <- ctcs@colData %>%
   rename("n" = "1") 
 
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
+plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","CTX ± ICI")
 
 plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
                                    ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
 
-plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
+plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P","M"))
 
 # Count cells
 plot_df %>% 
@@ -131,9 +139,12 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
 
 
 
-plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
-plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
+plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","CTX ± ICI","Tarla"))
+plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","CTX ± ICI","Tarla"))
 
+plot_df_long$group <- factor(plot_df_long$group, levels=c("Naive","CTX ± ICI","Tarla", "A", "N", "P", "M"))
+plot_df_long_left$group <- factor(plot_df_long_left$group, levels=c("Naive","CTX ± ICI","Tarla", "A", "N", "P", "M"))
+plot_df_long_right$group <- factor(plot_df_long_right$group, levels=c("Naive","CTX ± ICI","Tarla", "A", "N", "P", "M"))
 
 p2 <- ggplot(data = plot_df_long,
              aes(x = category, stratum = group, alluvium = cohort, y = total)) +
@@ -195,12 +206,12 @@ count_df <- ctcs@colData %>%
   as.data.frame() %>% 
   filter(collection_id %in% samples_used) 
 
-count_df$treatment_status <- ifelse(count_df$treatment_status == "naive","Naive","SOC")
+count_df$treatment_status <- ifelse(count_df$treatment_status == "naive","Naive","CTX ± ICI")
 count_df$tarla <- ifelse(count_df$tarla == "pre","Pre-Tarla","Tarla")
 
 count_df$treatment_status <- ifelse(count_df$treatment_status == "Naive", count_df$treatment_status, ifelse(count_df$tarla == "Pre-Tarla" | is.na(count_df$tarla),count_df$treatment_status,"Tarla"))
 
-count_df$treatment_status <- factor(count_df$treatment_status, levels=c("Naive","SOC","Pre-Tarla","Tarla"))
+count_df$treatment_status <- factor(count_df$treatment_status, levels=c("Naive","CTX ± ICI","Pre-Tarla","Tarla"))
 
 count_df %>% 
   count(treatment_status)
@@ -224,12 +235,12 @@ plot_df <- ctcs@colData %>%
   rename("n" = "1") 
 
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","SOC")
+plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive","Naive","CTX ± ICI")
 
 plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
                                    ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
 
-plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
+plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P","M"))
 
 
 plot_df_long <- to_lodes_form(data.frame(plot_df),
@@ -242,8 +253,8 @@ plot_df_long <- to_lodes_form(data.frame(plot_df),
 
 
 
-plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","SOC","Tarla"))
-plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","SOC","Tarla"))
+plot_df_long_left <- subset(plot_df_long, group %in% c("Naive","CTX ± ICI","Tarla"))
+plot_df_long_right <- subset(plot_df_long, !group %in% c("Naive","CTX ± ICI","Tarla"))
 
 
 p3 <- ggplot(data = plot_df_long,

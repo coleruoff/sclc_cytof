@@ -27,16 +27,17 @@ plot_df <- plot_df %>%
   filter(total >= 10)
 
 sample_order <- plot_df %>% 
-  filter(subtype == "I") %>% 
+  filter(subtype == "M") %>% 
   arrange(desc(freq)) %>% 
   pull(collection_id)
 
 plot_df$collection_id <- factor(plot_df$collection_id, levels = sample_order)
 
-plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","M"))
 
 plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive","Treated")
 plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive","Treated"))
+
 
 p1 <- ggplot(plot_df)+
   geom_col(aes(x=collection_id,y=freq,fill=subtype))+
@@ -69,7 +70,7 @@ dev.off()
 plot_df <- ctcs@colData %>% 
   as.data.frame()
 
-plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive","SOC")
+plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive","CTX ± ICI")
 
 plot_df$treatment_status <- ifelse(is.na(plot_df$tarla), plot_df$treatment_status,
                                    ifelse(plot_df$tarla == "pre", plot_df$treatment_status, "Tarla"))
@@ -86,19 +87,25 @@ plot_df <- plot_df %>%
   filter(total >= 10)
 
 sample_order <- plot_df %>% 
-  filter(subtype == "I") %>% 
+  filter(subtype == "M") %>% 
   arrange(desc(freq)) %>% 
   pull(collection_id)
 
 plot_df$collection_id <- factor(plot_df$collection_id, levels = sample_order)
 
-plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","M"))
 
-plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive","SOC","Tarla"))
+plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive","CTX ± ICI","Tarla"))
+
+plot_df <- plot_df %>% 
+  filter(collection_id != "MDA-SC292-2")
+
+plot_df$red_star <- ifelse(plot_df$total > 30, "*","")
 
 p2 <- ggplot(plot_df)+
   geom_col(aes(x=collection_id,y=freq,fill=subtype))+
   geom_text(aes(label=total,x=collection_id,y=103),size=3)+
+  geom_text(aes(label=red_star,x=collection_id,y=106),size=3,color="red")+
   # facet_wrap(~treatment_status,scales="free")+
   facet_grid(. ~ treatment_status, scales = "free", space = "free") +
   scale_fill_manual(values = cluster_colors)+
@@ -112,7 +119,7 @@ p2 <- ggplot(plot_df)+
         legend.title = element_text(size=20),
         legend.text = element_text(size=18),
         strip.text = element_text(size=20))
-
+p2
 ################################################################################
 # Save figure
 ################################################################################

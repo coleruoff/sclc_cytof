@@ -32,7 +32,7 @@ plot_df$treatment_status <- ifelse(plot_df$treatment_status == "naive", "Naive",
 
 plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive", "Treated"))
 
-patients_to_use <- c("SC293","SC506","SC443")
+patients_to_use <- c("MDA-SC293","MDA-SC506","MDA-SC443")
 
 plot_df <- plot_df %>%
   filter(patient_id %in% patients_to_use & treatment_status == "Naive")
@@ -41,7 +41,7 @@ plot_df <- plot_df %>%
 # Plot violin plots
 ################################################################################
 
-my_comparisons <- list(c("SC293", "SC506"), c("SC506", "SC443"), c("SC293", "SC443"))
+my_comparisons <- list(c("MDA-SC293", "MDA-SC506"), c("MDA-SC506", "MDA-SC443"), c("MDA-SC293", "MDA-SC443"))
 
 stat.test <- plot_df %>%
   group_by(antigen) %>%
@@ -49,7 +49,7 @@ stat.test <- plot_df %>%
   adjust_pvalue(method = "BH") %>%
   add_significance()
 
-plot_df$patient_id <- factor(plot_df$patient_id, levels=c("SC293","SC506","SC443"))
+plot_df$patient_id <- factor(plot_df$patient_id, levels=c("MDA-SC293","MDA-SC506","MDA-SC443"))
 
 p <- ggviolin(plot_df, x="patient_id" ,y="expression", fill="patient_id", lwd=.3, outlier.size = .1,draw_quantiles =0.5)+
   facet_wrap(~antigen,nrow=2)+

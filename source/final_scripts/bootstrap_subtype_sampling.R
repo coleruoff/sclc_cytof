@@ -21,7 +21,7 @@ subtype_status_colors <- c(
 all_data <- ctcs@colData %>% 
   as.data.frame()
 
-all_data$treatment_status <- ifelse(all_data$treatment_status == "naive","Naive","SOC")
+all_data$treatment_status <- ifelse(all_data$treatment_status == "naive","Naive","CTX ± ICI")
 
 all_data$treatment_status <- ifelse(is.na(all_data$tarla), all_data$treatment_status,
                                     ifelse(all_data$tarla == "pre", all_data$treatment_status, "Tarla"))
@@ -51,11 +51,11 @@ resamples <- map(1:1000, ~ {
 # Combine
 df_resampled <- bind_rows(resamples)
 
-df_resampled$treatment_status <- factor(df_resampled$treatment_status, levels = c("Naive","SOC","Tarla"))
-df_resampled$subtype <- factor(df_resampled$subtype, levels = c("A","N","P","I"))
+df_resampled$treatment_status <- factor(df_resampled$treatment_status, levels = c("Naive","CTX ± ICI","Tarla"))
+df_resampled$subtype <- factor(df_resampled$subtype, levels = c("A","N","P","M"))
 df_resampled$treatment_subtype <- paste0(df_resampled$treatment_status,"_",df_resampled$subtype)
 df_resampled$treatment_subtype <- factor(df_resampled$treatment_subtype, levels=c("Naive_A","SOC_A","Tarla_A", "Naive_N","SOC_N","Tarla_N",
-                                                                                  "Naive_P","SOC_P","Tarla_P","Naive_I","SOC_I","Tarla_I"))
+                                                                                  "Naive_P","SOC_P","Tarla_P","Naive_M","SOC_M","Tarla_M"))
 
 
 stat.test <- df_resampled %>%

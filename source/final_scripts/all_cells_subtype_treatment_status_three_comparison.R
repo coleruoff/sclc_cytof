@@ -15,7 +15,7 @@ ctcs <- readRDS("data/cytof_objects/ctcs_with_subtype.rds")
 all_data <- ctcs@colData %>% 
   as.data.frame()
 
-all_data$treatment_status <- ifelse(all_data$treatment_status == "naive","Naive","SOC")
+all_data$treatment_status <- ifelse(all_data$treatment_status == "naive","Naive","CTX ± ICI")
 
 all_data$treatment_status <- ifelse(is.na(all_data$tarla), all_data$treatment_status,
                                         ifelse(all_data$tarla == "pre", all_data$treatment_status, "Tarla"))
@@ -23,10 +23,10 @@ all_data$treatment_status <- ifelse(is.na(all_data$tarla), all_data$treatment_st
 
 plot_results <- list()
 ################################################################################
-# Naive vs SOC Association
+# Naive vs CTX + ICI Association
 ################################################################################
 data_df <- all_data %>% 
-  filter(treatment_status %in% c("Naive","SOC")) %>% 
+  filter(treatment_status %in% c("Naive","CTX ± ICI")) %>% 
   select(subtype,treatment_status,patient_id)
 
 # count cells and patients
@@ -37,10 +37,10 @@ data_df %>%
   count(patient_id,treatment_status) %>% 
   count(treatment_status)
 
-data_df$treatment_status <- factor(data_df$treatment_status, levels = c("Naive","SOC"))
+data_df$treatment_status <- factor(data_df$treatment_status, levels = c("Naive","CTX ± ICI"))
 
 results_list <- list()
-for(curr_subtype in c("A","N","P","I")){
+for(curr_subtype in c("A","N","P","M")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
@@ -75,9 +75,9 @@ plot_df <- all_results %>%
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
-plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","M"))
 
-plot_df$comparison <- "Naive_SOC"
+plot_df$comparison <- "Naive_CTX ± ICI"
 
 plot_results <- append(plot_results,list(plot_df))
 
@@ -102,7 +102,7 @@ data_df %>%
 data_df$treatment_status <- factor(data_df$treatment_status, levels = c("Naive","Tarla"))
 
 results_list <- list()
-for(curr_subtype in c("A","N","P","I")){
+for(curr_subtype in c("A","N","P","M")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
@@ -137,7 +137,7 @@ plot_df <- all_results %>%
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
-plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","M"))
 
 plot_df$comparison <- "Naive_Tarla"
 
@@ -148,7 +148,7 @@ sprintf("%.4f", plot_df$padj)
 # Naive vs Tarla  Association
 ################################################################################
 data_df <- all_data %>% 
-  filter(treatment_status %in% c("SOC","Tarla")) %>% 
+  filter(treatment_status %in% c("CTX ± ICI","Tarla")) %>% 
   select(subtype,treatment_status,patient_id)
 
 # count cells and patients
@@ -159,10 +159,10 @@ data_df %>%
   count(patient_id,treatment_status) %>% 
   count(treatment_status)
 
-data_df$treatment_status <- factor(data_df$treatment_status, levels = c("SOC","Tarla"))
+data_df$treatment_status <- factor(data_df$treatment_status, levels = c("CTX ± ICI","Tarla"))
 
 results_list <- list()
-for(curr_subtype in c("A","N","P","I")){
+for(curr_subtype in c("A","N","P","M")){
   data_df$curr_subtype <- as.factor(as.integer(data_df$subtype == curr_subtype))
   
   formula_str <- glue("curr_subtype ~ {colnames(data_df)[2]} + (1 | patient_id)")
@@ -197,10 +197,10 @@ plot_df <- all_results %>%
   mutate(log_lower_or = log(low_or)) %>% 
   mutate(star_height = ifelse(log_or > 0, log_or+.1,log_or-.1))
 
-plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","I"))
+plot_df$subtype <- factor(plot_df$subtype,levels=c("A","N","P","M"))
 
 
-plot_df$comparison <- "SOC_Tarla"
+plot_df$comparison <- "CTX ± ICI_Tarla"
 
 plot_results <- append(plot_results,list(plot_df))
 
@@ -217,8 +217,8 @@ plot_df <- plot_df %>%
 plot_df$left_label <- as.character(sapply(plot_df$comparison, function(x) strsplit(x,"_")[[1]][1]))
 plot_df$right_label <- as.character(sapply(plot_df$comparison, function(x) strsplit(x,"_")[[1]][2]))
 
-plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
-plot_df$comparison <- factor(plot_df$comparison, levels = c("Naive_SOC","Naive_Tarla","SOC_Tarla"))
+plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'M'))
+plot_df$comparison <- factor(plot_df$comparison, levels = c("Naive_CTX ± ICI","Naive_Tarla","CTX ± ICI_Tarla"))
 
 p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
   geom_point(aes(shape = factor(signif)),size=12,fill="white",show.legend = F, stroke=3)+
@@ -240,6 +240,8 @@ p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
         strip.background = element_blank(),
         strip.text = element_blank())
 
+
+p1
 tiff(glue("figures/subtype_treatment_status_lme_results_all_comp.tiff"), width=360,height=200, units = "mm", res=600)
 print(p1)
 dev.off()

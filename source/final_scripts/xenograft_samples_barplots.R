@@ -17,7 +17,7 @@ curr_data <- ctcs
 
 cluster_colors <- c("#dd4b33", "#F1FAEE", "#A8DADC", "#457B9D")
 
-patients_to_use <- c("SC293","SC506","SC443")
+patients_to_use <- c("MDA-SC293","MDA-SC506","MDA-SC443")
 
 plot_df <- as.data.frame(curr_data@colData) %>% 
   filter(patient_id %in% patients_to_use & treatment_status == "naive") %>% 
@@ -27,11 +27,11 @@ plot_df <- as.data.frame(curr_data@colData) %>%
   mutate(total = sum(n)) %>% 
   mutate(freq = (n/total)*100) 
 
-plot_df$total <- ifelse(plot_df$subtype == "I", plot_df$total,"")
+plot_df$total <- ifelse(plot_df$subtype == "M", plot_df$total,"")
 
-plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P",'I'))
+plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P","M"))
 
-plot_df$patient_id <- factor(plot_df$patient_id, levels=c("SC293","SC506","SC443"))
+plot_df$patient_id <- factor(plot_df$patient_id, levels=c("MDA-SC293","MDA-SC506","MDA-SC443"))
 
 ################################################################################
 # Plot barplots

@@ -13,6 +13,8 @@ cancer_enriched <- readRDS("data/cytof_objects/cancer_enriched_with_clusters.rds
 #Subset to clusters with known CTC marker profiles
 ctcs <- cancer_enriched[,cancer_enriched$new_clusters %in% c(2,4,5,6,7,8)]
 
+ctcs$patient_id <- paste0("MDA-",ctcs$patient_id)
+ctcs$collection_id <- paste0("MDA-",ctcs$collection_id)
 ################################################################################
 # Create heatmap
 ################################################################################
@@ -88,7 +90,7 @@ num_subclusters <- 4
 
 ht <- Heatmap(all_samples_heatmap, column_km = num_subclusters, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-I","SCLC-N"),
+              row_dend_reorder = F, column_title = c("SCLC-A", "SCLC-P","SCLC-M","SCLC-N"),
               row_names_gp = gpar(fontsize=20),column_title_gp = gpar(fontsize=20),
               heatmap_legend_param = list(
                 title = "   Scaled\nExpression",      
@@ -98,7 +100,7 @@ ht <- Heatmap(all_samples_heatmap, column_km = num_subclusters, top_annotation =
                 grid_width = unit(.5,"cm")))
 
 all_samples_ht <- draw(ht)
-
+# expression("SCLC-A"^"-"~"P"^"-"~"N"^"-")
 #############################################################################
 # Create heatmap with naive samples only
 #############################################################################
@@ -123,7 +125,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = curr_metadata$patient_id,
 
 ht <- Heatmap(naive_heatmap, column_km = num_subclusters, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-N", "SCLC-P","SCLC-I","SCLC-A"))
+              row_dend_reorder = F, column_title = c("SCLC-N", "SCLC-P","SCLC-M","SCLC-A"))
 
 naive_ht <- draw(ht)
 
@@ -152,7 +154,7 @@ patient_anno <- HeatmapAnnotation("Patient ID" = curr_metadata$patient_id,
 
 ht <- Heatmap(treated_heatmap, column_km = num_subclusters, top_annotation = sample_anno, name="Expression",
               cluster_columns = T, cluster_rows = F, show_column_names=F,col = col_fun,
-              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-A","SCLC-I","SCLC-N"))
+              row_dend_reorder = F, column_title = c("SCLC-P", "SCLC-A","SCLC-M","SCLC-N"))
 
 treated_ht <- draw(ht)
 
@@ -181,7 +183,7 @@ dev.off()
 clusters <- column_order(all_samples_ht)
 
 # Rename clusters
-names(clusters) <- c("A","P","I","N")
+names(clusters) <- c("A","P","M","N")
 # names(clusters) <- c("P","I","A","N")
 
 # Create dataframe of cell IDs and associated subtypes
@@ -202,6 +204,7 @@ all(subtype_order$cell_id == colData(ctcs)$cell_id)
 
 # Add subtypes to colData
 colData(ctcs)$subtype <- subtype_order$subtype
+
 
 # Save data with subtype assignments
 saveRDS(ctcs, "data/cytof_objects/ctcs_with_subtype.rds")

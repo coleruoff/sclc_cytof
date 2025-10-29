@@ -76,7 +76,7 @@ source("source/final_scripts/ctc_subtype_treatment_proportion_barplot.R")
 # Alluvial Plots
 ################################################################################
 source("source/final_scripts/subtype_treatment_alluvial.R")
-# source("source/final_scripts/downsample_subtype_associations.R")
+source("source/final_scripts/downsample_alluvial.R")
 
 ################################################################################
 # Downsampling analysis
