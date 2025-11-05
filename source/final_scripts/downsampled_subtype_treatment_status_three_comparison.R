@@ -46,7 +46,7 @@ for(i in 1:4){
   
   ################################################################################
   # Chi-squared test: Naive vs CTX ± ICI
-  tbl <- contin_table[,c(2,1)]
+  tbl <- contin_table[,c(1,2)]
   chi_result <- chisq.test(tbl, correct = F)
   
   a <- tbl[1,1]
@@ -67,7 +67,7 @@ for(i in 1:4){
   
   ################################################################################
   # Chi-squared test: Naive vs Tarla
-  tbl <- contin_table[,c(3,1)]
+  tbl <- contin_table[,c(3,2)]
   chi_result <- chisq.test(tbl, correct = F)
   
   a <- tbl[1,1]
@@ -88,7 +88,7 @@ for(i in 1:4){
   
   ################################################################################
   # Chi-squared test: CTX ± ICI vs Tarla
-  tbl <- contin_table[,c(3,2)]
+  tbl <- contin_table[,c(3,1)]
   chi_result <- chisq.test(tbl, correct = F)
   
   a <- tbl[1,1]
@@ -158,7 +158,7 @@ p1 <- ggplot(plot_df,aes(x=log_or,y=fct_rev(subtype),color=subtype))+
         strip.text = element_blank())
 
 
-
+p1
 tiff(glue("figures/downsampled_subtype_treatment_status_chi_squared_results_all_comp_{n_cells}.tiff"), width=360,height=200, units = "mm", res=600)
 print(p1)
 dev.off()

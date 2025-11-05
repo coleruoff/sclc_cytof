@@ -26,7 +26,6 @@ sampled_data$treatment_status <- ifelse(sampled_data$treatment_status == "naive"
 
 sampled_data$treatment_status <- ifelse(is.na(sampled_data$tarla), sampled_data$treatment_status,
                                    ifelse(sampled_data$tarla == "pre", sampled_data$treatment_status, "Tarla"))
-
 ################################################################################
 # Create plot dataframe
 ################################################################################
@@ -38,6 +37,8 @@ plot_df <- sampled_data %>%
 plot_df$treatment_status <- factor(plot_df$treatment_status, levels=c("Naive","CTX ± ICI","Tarla"))
 
 plot_df$subtype <- factor(plot_df$subtype, levels=c("A","N","P","Mes"))
+
+
 
 plot_df %>% 
   count(subtype, treatment_status) %>% 

@@ -92,6 +92,8 @@ source("source/final_scripts/xenograft_samples_barplots.R")
 source("source/final_scripts/xenograft_samples_violin_plots.R")
 source("source/final_scripts/xenograft_samples_heatmap.R")
 
+source("source/final_scripts/pleural_effusion_heatmap.R")
+
 ################################################################################
 # Calculate percent CTCs
 ################################################################################

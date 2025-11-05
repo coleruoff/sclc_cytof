@@ -27,7 +27,7 @@ plot_df <- plot_df %>%
   filter(total >= 10)
 
 sample_order <- plot_df %>% 
-  filter(subtype == "M") %>% 
+  filter(subtype == "Mes") %>% 
   arrange(desc(freq)) %>% 
   pull(collection_id)
 
@@ -98,8 +98,9 @@ plot_df$subtype <- factor(plot_df$subtype, levels = c("A","N","P","Mes"))
 plot_df$treatment_status <- factor(plot_df$treatment_status, levels = c("Naive","CTX ± ICI","Tarla"))
 
 plot_df <- plot_df %>% 
-  filter(collection_id != "MDA-SC292-2")
+  filter(!collection_id %in% c("MDA-SC399-2"))
 
+plot_df$collection_id %>% unique()
 plot_df$red_star <- ifelse(plot_df$total > 30, "*","")
 
 p2 <- ggplot(plot_df)+
@@ -131,7 +132,7 @@ dev.off()
 # Count
 ################################################################################
 
-plot_df$patient_id <- sapply(as.character(plot_df$collection_id), function(x) strsplit(x,"-")[[1]][1])
+plot_df$patient_id <- sapply(as.character(plot_df$collection_id), function(x) strsplit(x,"-")[[1]][2])
 
 plot_df %>% 
   pull(patient_id) %>% 
@@ -157,16 +158,21 @@ plot_df %>%
   unique() %>% 
   length()
 
+plot_df %>% 
+  filter(treatment_status == "CTX ± ICI") %>% 
+  pull(n) %>% 
+  sum()
+  nrow()
 # SOC patients
 plot_df %>% 
-  filter(treatment_status == "SOC") %>% 
+  filter(treatment_status == "CTX ± ICI") %>% 
   pull(patient_id) %>% 
   unique() %>% 
   length()
 
 # SOC LBs
 plot_df %>% 
-  filter(treatment_status == "SOC") %>% 
+  filter(treatment_status == "CTX ± ICI") %>% 
   pull(collection_id) %>% 
   unique() %>% 
   length()

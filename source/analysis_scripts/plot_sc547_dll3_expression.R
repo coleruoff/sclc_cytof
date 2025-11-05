@@ -1,7 +1,5 @@
-
 ################################################################################
-# This script plots violin plots of the expression of all protein markers between
-# naive CTCs and CTCs treated with SOC
+# This script plots violin plots of the expression of .....
 ################################################################################
 source("source/sclc_cytof_functions.R")
 
@@ -73,7 +71,7 @@ p1 <- ggviolin(plot_df, x="collection_id" ,y="expression", fill="collection_id",
         strip.background = element_blank(),
         legend.position = "none")
 
-
+p1
 tiff(glue("figures/SC547_DLL3_expression_violinplot.tiff"), width=150,height=165, units = "mm", res=600)
 print(p1)
 dev.off()
@@ -87,6 +85,13 @@ ctc_547_data <- ctcs[,ctcs$patient_id == "MDA-SC547"]
 curr_ctcs_ids <- ctc_547_data$cell_id
 
 sce <- readRDS("data/cytof_objects/sclc_all_samples_object.rds")
+dim(sce)
+sce <- readRDS("data/cytof_objects/sclc_all_samples_object_no_qc.rds")
+
+sce %>% 
+  colData() %>% 
+  as.data.frame() %>% 
+  count(patient_id)
 
 curr_data <- sce[,sce$patient_id %in% paste0("NORMAL", 21:24) | sce$cell_id %in% curr_ctcs_ids]
 
@@ -226,7 +231,7 @@ p5 <- ggviolin(plot_df, x = "collection_id", y = "expression",
         strip.background = element_blank(),
         legend.position = "none")
 
-p3
+p5
 
 tiff(glue("figures/normal_vs_SC547_DLL3_expression_violinplot_v1.tiff"), width=150,height=165, units = "mm", res=600)
 print(p3)
