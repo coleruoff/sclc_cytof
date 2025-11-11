@@ -13,6 +13,7 @@ This project is fully reproducible using Docker and `renv`.
 
 sclc_cytof/    
 ├─ Dockerfile  
+├─ Makefile
 ├─ renv.lock  
 ├─ run_all_scripts.R # Master script to reproduce all results.    
 ├─ source/final_scripts # scripts to be run.   
@@ -21,6 +22,9 @@ sclc_cytof/
 
 - `run_all_scripts.R` executes all analysis steps in the correct order.  
 - `renv.lock` locks the exact package versions used in the project.  
+- `Dockfile` contains environment specifications
+- `Makefile` allows for simple reproducibility
+
 
 ## Quick Start
 
@@ -29,5 +33,16 @@ sclc_cytof/
 ```bash     
 git clone https://github.com/coleruoff/sclc_cytof.git      
 cd sclc_cytof
+```
 
-2. 
+2. **Build the environment**
+
+```bash 
+make build
+```
+
+3. **Reproduce results**
+
+```bash 
+make build
+```
