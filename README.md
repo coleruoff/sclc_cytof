@@ -17,24 +17,27 @@ sclc_cytof/
 ├─ Makefile
 ├─ renv.lock 
 ├─ renv/ 
-│ 
 ├─ source/
-│   │
-│   └─final_scripts              # Scripts to be run   
-│       │
-│       └─run_all_scripts.R      # Master script to reproduce all results 
-│
-├─ data/                         # Input data files and intermediate files (available to download at [LINK]) www.github.com
-
-│
-└─ figures/                      # Generated figures. 
+│   └─ final_scripts/             # Scripts to be run   
+│       └─ run_all_scripts.R      # Master script to reproduce all results 
+├─ data/                          # Input data files and intermediate files          
+│   ├─ cytof_raw_data/                  (available to download below)
+│   ├─ run_stats/
+│   ├─ cytof_panel_info.csv
+│   └─ cytof_metadata.csv                                 
+└─ figures/                       # Generated figures 
 ```  
 
 
 - `Dockfile` contains environment specifications
 - `Makefile` allows for simple reproducibility
-- `renv.lock` and `renv/` locks the exact package versions used in the project.  
+- `renv.lock` and `renv/` locks the exact package versions used in the project 
 
+## Data download
+
+- All data needed to reproduce results available at [LINK](https://en.wikipedia.org/wiki/Data)  
+
+- Download all data into `data/` in project directory
 
 ## Quick Start
 
